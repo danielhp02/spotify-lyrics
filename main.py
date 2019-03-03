@@ -1,9 +1,15 @@
+import sys
 import json
 import spotipy
 import spotipy.util as util
 
 scope = 'user-read-playback-state'
-username = 'dandalf21'
+
+if len(sys.argv) > 1:
+    username = sys.argv[1]
+else:
+    print("Usage: %s username" % (sys.argv[0],))
+    sys.exit()
 
 def get_artist(song):
     artists = []
