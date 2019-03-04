@@ -30,7 +30,6 @@ if token:
     running = True
     try:
         while running:
-            if
             current_playback = sp.current_playback()['item']
 
             if current_playback is not None:
