@@ -49,7 +49,7 @@ if token:
                         artist_string = ''.join(artist_string)
                         print(current_song['name'], 'by', str(artist_string), 'is now playing.')
     except KeyboardInterrupt:
-        print("Closing...")
+        print("\nClosing...")
         sys.exit()
 else:
     print("Can't get token for", username)
