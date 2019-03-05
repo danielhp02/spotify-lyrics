@@ -30,6 +30,9 @@ def get_track(sp):
         return {'name':  None,
                 'artist': None}
 
+def get_lyrics(song):
+    return genius.search_song(current_song["name"], current_song["artist"][0]).lyrics
+
 def print_track(current_song): # Change later, maybe to output a string or list of formatted strings (eg. [title, [artist1, artist2]])
     if len(current_song['artist']) == 1:
         print(current_song['name'], 'by', str(current_song['artist'][0]), 'is now playing.')
@@ -65,8 +68,7 @@ if token:
 
             if last_song['name'] != current_song['name']:
                 print_track(current_song)
-                genius_song = genius.search_song(current_song["name"], current_song["artist"][0])
-                print(genius_song.lyrics)
+                print(get_lyrics(current_song))
 
     except KeyboardInterrupt:
         print("\nClosing...")
