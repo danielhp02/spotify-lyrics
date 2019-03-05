@@ -1,5 +1,5 @@
 import sys
-import json
+import simplejson
 import spotipy
 import spotipy.util as util
 import lyricsgenius
@@ -47,7 +47,7 @@ def print_track(current_song): # Change later, maybe to output a string or list 
 
 # Load tokens
 with open('./tokens.json', 'r') as json_file:
-    tokens = json.load(json_file)
+    tokens = simplejson.load(json_file)
 
 # Authenticate Spotify and Genius
 token = util.prompt_for_user_token(username, scope, tokens["spotify"]['client_id'], tokens["spotify"]['client_secret'], tokens["spotify"]['redirect_uri'])
