@@ -19,8 +19,7 @@ def get_artist(song):
         artists.append(artist['name'])
     return artists
 
-def get_track(sp, text_output=False): # if text_output is False, it will output a dict
-    # print(type(sp.current_playback()))
+def get_track(sp):
     current_playback = sp.current_playback()
 
     if current_playback is not None:
