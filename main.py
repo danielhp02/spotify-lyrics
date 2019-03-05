@@ -3,14 +3,19 @@ import simplejson
 import spotipy
 import spotipy.util as util
 import lyricsgenius
+from flask import Flask
 
 scope = 'user-read-playback-state'
 
-if len(sys.argv) > 1:
-    username = sys.argv[1]
-else:
-    print("Usage: %s username" % (sys.argv[0],))
-    sys.exit()
+app = Flask(__name__)
+
+username = "dandalf21"
+
+# if len(sys.argv) > 1:
+#     username = sys.argv[1]
+# else:
+#     print("Usage: %s username" % (sys.argv[0],))
+#     sys.exit()
 
 # Define functions
 def get_artist(song):
@@ -55,23 +60,39 @@ with open('./tokens.json', 'r') as json_file:
 token = util.prompt_for_user_token(username, scope, tokens["spotify"]['client_id'], tokens["spotify"]['client_secret'], tokens["spotify"]['redirect_uri'])
 genius = lyricsgenius.Genius(tokens["genius"]["token"])
 
-if token:
-    sp = spotipy.Spotify(auth=token)
+sp = spotipy.Spotify(auth=token)
 
-    current_song = {'name':  None,
-                    'artist': None}
-    running = True
-    try:
-        while running:
-            last_song = current_song
-            current_song = get_track(sp)
+current_song = {'name':  None,
+                'artist': None}
 
-            if last_song['name'] != current_song['name']:
-                print_track(current_song)
-                print(get_lyrics(current_song))
+@app.route('/')
+def index():
+    global current_song
+    last_song = current_song
+    current_song = get_track(sp)
 
-    except KeyboardInterrupt:
-        print("\nClosing...")
-        sys.exit()
-else:
-    print("Can't get token for", username)
+    if last_song['name'] != current_song['name']:
+        print_track(current_song)
+        lyrics = get_lyrics(current_song)
+    return lyrics
+
+# if token:
+#     sp = spotipy.Spotify(auth=token)
+#
+#     current_song = {'name':  None,
+#                     'artist': None}
+#     running = True
+#     try:
+#         while running:
+#             last_song = current_song
+#             current_song = get_track(sp)
+#
+#             if last_song['name'] != current_song['name']:
+#                 print_track(current_song)
+#                 print(get_lyrics(current_song))
+#
+#     except KeyboardInterrupt:
+#         print("\nClosing...")
+#         sys.exit()
+# else:
+#     print("Can't get token for", username)
