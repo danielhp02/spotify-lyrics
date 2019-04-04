@@ -1,0 +1,3 @@
+track info to db
+register lyrics.py route
+output
