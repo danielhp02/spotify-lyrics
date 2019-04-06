@@ -1,7 +1,8 @@
 import sys
 import simplejson
 from multiprocessing import Process, Value
-import sqlite3
+# import sqlite3
+from . import db
 
 import click
 from flask import current_app, g
@@ -31,18 +32,6 @@ def init(spotipy, util, lyricsgenius):
 #     print("Usage: %s username" % (sys.argv[0],))
 #     sys.exit()
 
-# Global data
-class Data():
-    def __init__(self):
-        self.currently_playing_song = {'name':  None, 'artist': None, 'lyrics': None}
-
-    def set_currently_playing_song(self, name, artist, lyrics):
-        self.currently_playing_song['name'] = name
-        self.currently_playing_song['artist'] = artist
-        self.currently_playing_song['lyrics'] = lyrics
-
-global_data = Data()
-
 # Define functions
 def get_artist(song):
     artists = []
@@ -64,24 +53,27 @@ def get_track(sp):
 def get_lyrics(genius, song):
     return genius.search_song(song["name"], song["artist"][0]).lyrics
 
+def get_song_data(sp, genius):
+    song_data = get_track(sp)
+    if db.query_db("SELCT name FROM song WHERE name = ?", (song_data['name'])) is not None:
+        lyrics = get_lyrics(genius, song)
+        db.query_db("INSERT INTO song (name, artists, lyrics) VALUES (?, ?, ?)",
+                    (song_data['name'], song_data['artist'], lyrics))
 
-def output_lyrics_loop(sp, genius):
-    global global_data
+# def output_lyrics_loop(sp, genius):
 
-    current_song = {'name':  None,
-                    'artist': None}
-    running = True
+    # running = True
+    #
+    # while running:
+    #     last_song = current_song
+    #     current_song = get_track(sp)
 
-    while running:
-        last_song = current_song
-        current_song = get_track(sp)
+        # if last_song['name'] != current_song['name']:
+            # print_track(current_song)
+            # lyrics = get_lyrics(genius, current_song)
 
-        if last_song['name'] != current_song['name']:
-            print_track(current_song)
-            lyrics = get_lyrics(genius, current_song)
-
-            global_data.set_currently_playing_song(current_song['name'], current_song['artist'], lyrics)
-            print(global_data.currently_playing_song)
+            # global_data.set_currently_playing_song(current_song['name'], current_song['artist'], lyrics)
+            # print(global_data.currently_playing_song)
 
 def print_track(current_song): # Change later, maybe to output a string or list of formatted strings (eg. [title, [artist1, artist2]])
     if len(current_song['artist']) == 1:

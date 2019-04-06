@@ -39,10 +39,13 @@ def create_app(test_config=None):
 
     from . import lyrics
     objects = lyrics.init(spotipy, util, lyricsgenius)
-    p = Process(target=lyrics.output_lyrics_loop, args=(objects["spotipy"], objects["genius"],))
-    p.start()
+    # p = Process(target=lyrics.output_lyrics_loop, args=(objects["spotipy"], objects["genius"],))
+    # p.start()
     # app.run(debug=True, use_reloader=False)
     # p.join()
     # lyrics.output_lyrics_loop(objects["spotipy"], objects["genius"])
+    @app.route('/')
+    def root():
+        return db.query_db("SELECT * FROM song WHERE songid = (SELECT MAX(songid) FROM song)")
 
     return app
