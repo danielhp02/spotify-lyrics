@@ -13,7 +13,7 @@ current_song_id = 0
 # spotify data
 def init(spotipy, util, lyricsgenius):
     scope = 'user-read-playback-state'
-    username = "dandalf21"
+    username = "dandalf21" # <-- Change to your Spotify username
 
     # Load tokens
     with open('./tokens.json', 'r') as json_file:
@@ -25,7 +25,7 @@ def init(spotipy, util, lyricsgenius):
 
     sp = spotipy.Spotify(auth=token)
 
-    return {"spotipy": sp,
+    return {"spotipy":  sp,
             "genius":   genius}
 
 # if len(sys.argv) > 1:

@@ -1,5 +1,5 @@
 # spotify-lyrics
-Gets current track from Spotify and then gets the lyrics from Genius
+Gets current track from Spotify, gets the lyrics from Genius and outputs to a Flask app.
 
 ## Dependencies
 * [spotipy](https://github.com/plamere/spotipy) - Used for getting current song data from Spotify
@@ -11,3 +11,16 @@ Gets current track from Spotify and then gets the lyrics from Genius
   * [MarkupSafe](https://pypi.org/project/MarkupSafe/) - Comes with Jinja2
   * [ItsDangerous](https://pythonhosted.org/itsdangerous/)
   * [Click](http://click.pocoo.org/)
+
+## Set up
+### Code adjustments
+* Change the `username` string on line 16 of `./spogen/lyrics.py` to your Spotify username.
+
+### Console
+* Navigate to the application directory ([whatever]/spotify-lyrics)
+* Run the following commands to set up Flask:
+```
+export FLASK_APP="spogen"
+export FLASK_ENV=development
+```
+* Set up the database with `flask init-db`
