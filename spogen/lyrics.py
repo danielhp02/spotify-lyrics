@@ -70,14 +70,14 @@ def get_song_data(sp, genius):
             db.query_db("INSERT INTO artists (artist, songname) VALUES (?, ?)", (str(artist), str(song_data['name']),))
 
         current_song_id = db.query_db("SELECT id FROM song WHERE id = (SELECT MAX(id) FROM song)")[0]["id"]
-        print("current_song_id:", current_song_id[0]["id"])
+        print("current_song_id:", current_song_id)
 
         db.get_db().commit() # Saves database
         print("Current song successfully entered into database.")
     else:
         print("Song is already in database.")
-        current_song_id = db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],))
-        print("current_song_id:", current_song_id[0]["id"])
+        current_song_id = db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],))[0]["id"]
+        print("current_song_id:", current_song_id)
 
 def print_track():
     current_song = db.query_db("SELECT * FROM song WHERE id = (SELECT MAX(id) FROM song)")[0]
