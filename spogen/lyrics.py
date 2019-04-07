@@ -62,39 +62,39 @@ def get_song_data(sp, genius):
     song_data = get_track(sp)
     if db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],)) == []:
         print("Song not found in database. Song will be added.")
-        print(type(db.query_db("SELECT name FROM song WHERE name = ?", (song_data['name'],))))
+        db.query_db("SELECT name FROM song WHERE name = ?", (song_data['name'],))
         lyrics = get_lyrics(genius, song_data)
-        print(type(db.query_db("INSERT INTO song (name, lyrics) VALUES (?, ?)", (str(song_data['name']), lyrics,))))
+        db.query_db("INSERT INTO song (name, lyrics) VALUES (?, ?)", (str(song_data['name']), lyrics,))
 
         for artist in song_data["artist"]:
             db.query_db("INSERT INTO artists (artist, songname) VALUES (?, ?)", (str(artist), str(song_data['name']),))
 
         current_song_id = db.query_db("SELECT id FROM song WHERE id = (SELECT MAX(id) FROM song)")[0]["id"]
-        print("current_song_id:", current_song_id)
+        print("current_song_id:", current_song_id[0]["id"])
 
         db.get_db().commit() # Saves database
         print("Current song successfully entered into database.")
     else:
         print("Song is already in database.")
         current_song_id = db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],))
-        print("current_song_id:", current_song_id)
+        print("current_song_id:", current_song_id[0]["id"])
 
 def print_track():
     current_song = db.query_db("SELECT * FROM song WHERE id = (SELECT MAX(id) FROM song)")[0]
     artists = db.query_db("SELECT * FROM artists WHERE songname = ?", (current_song["name"],))
 
-    print("type(current_song):", type(current_song))
-    print("artists:", artists[0][0])
+    # print("type(current_song):", type(current_song))
+    # print("artists:", artists[0][0])
 
     output = []
 
     # Process song name and artists
     if len(artists) == 1: # number of artists
-        print("one artist")
+        print("This song has one artist.")
         current_song_string = " ".join([current_song['name'], 'by', str(artists[0][0]), 'is now playing.'])
         output.append(current_song_string)
     else:
-        print("more than one artist")
+        print("This song has multiple artists.")
         artist_string = [artists[0][0]]
         for index in range(1, len(artists)):
             artist = artists[index][0]
@@ -107,12 +107,12 @@ def print_track():
         output.append(current_song_string)
 
     # Process lyrics
-    print("lyrics:", repr(current_song["lyrics"]))
+    # print("lyrics:", repr(current_song["lyrics"]))
     lyrics = list(repr(current_song["lyrics"]).replace(r"\n", "<br>"))
     del lyrics[0]
     del lyrics[-1]
     lyrics = "".join(lyrics)
-    print(lyrics)
+    # print(lyrics)
     output.append(lyrics)
 
     return output
