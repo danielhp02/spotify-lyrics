@@ -27,7 +27,7 @@ export FLASK_ENV=development
 ```
 * Set up the database with `flask init-db`
 
-## Tokens
+### Tokens
 At the moment, tokens must be manually added. Support for oAuth 2.0 is planned to be implemented soon.
 * Duplicate `./tokens.dummy.json` and rename it to `tokens.json`.
 * Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/) and log in.
