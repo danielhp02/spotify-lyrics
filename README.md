@@ -24,3 +24,6 @@ export FLASK_APP="spogen"
 export FLASK_ENV=development
 ```
 * Set up the database with `flask init-db`
+
+## Running the program
+To run, use `flask run`. If everything is set up correctly, it **should** work.
