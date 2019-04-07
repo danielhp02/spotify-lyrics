@@ -1,6 +1,4 @@
 import os
-import sys
-import simplejson
 import spotipy
 import spotipy.util as util
 import lyricsgenius

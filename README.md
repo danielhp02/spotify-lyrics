@@ -11,8 +11,10 @@ Gets current track from Spotify, gets the lyrics from Genius and outputs to a Fl
   * [MarkupSafe](https://pypi.org/project/MarkupSafe/) - Comes with Jinja2
   * [ItsDangerous](https://pythonhosted.org/itsdangerous/)
   * [Click](http://click.pocoo.org/)
+* [SimpleJSON](https://simplejson.readthedocs.io/) - Used for reading the tokens file
 
 ## Set up
+The following set up guide is written under the assumption that you are using a Unix based shell. If not, I *highly* recommend you get one. I use Ubuntu through [WSL (Windows Subsystem for Linux)](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
 ### Code adjustments
 * Change the `username` string on line 16 of `./spogen/lyrics.py` to your Spotify username.
 
