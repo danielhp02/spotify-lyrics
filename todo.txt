@@ -1,4 +1,0 @@
-track info to db - possibly done
-register lyrics.py route - possibly done
-create a blueprint + view/s
-output

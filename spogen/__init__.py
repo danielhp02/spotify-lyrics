@@ -48,7 +48,7 @@ def create_app(test_config=None):
     @app.route('/')
     def root():
         lyrics.get_song_data(objects["spotipy"], objects["genius"])
-        current_song_string = lyrics.print_track()
-        return render_template('base.html', text=current_song_string)
+        song_details = lyrics.print_track()
+        return render_template('base.html', song_text=song_details[0], lyrics=song_details[1])
 
     return app

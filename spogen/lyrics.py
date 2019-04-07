@@ -53,7 +53,10 @@ def get_track(sp):
                 'artist': None}
 
 def get_lyrics(genius, song):
-    return genius.search_song(song["name"], song["artist"][0]).lyrics
+    try:
+        return genius.search_song(song["name"], song["artist"][0]).lyrics
+    except AttributeError:
+        return "Lyrics not found."
 
 def get_song_data(sp, genius):
     song_data = get_track(sp)
@@ -83,10 +86,13 @@ def print_track():
     print("type(current_song):", type(current_song))
     print("artists:", artists[0][0])
 
+    output = []
+
+    # Process song name and artists
     if len(artists) == 1: # number of artists
         print("one artist")
         current_song_string = " ".join([current_song['name'], 'by', str(artists[0][0]), 'is now playing.'])
-        return current_song_string
+        output.append(current_song_string)
     else:
         print("more than one artist")
         artist_string = [artists[0][0]]
@@ -98,9 +104,18 @@ def print_track():
                 artist_string.append(', ' + str(artist))
         artist_string = ''.join(artist_string)
         current_song_string = " ".join([current_song['name'], 'by', str(artist_string), 'is now playing.'])
-        return current_song_string
+        output.append(current_song_string)
 
+    # Process lyrics
+    print("lyrics:", repr(current_song["lyrics"]))
+    lyrics = list(repr(current_song["lyrics"]).replace(r"\n", "<br>"))
+    del lyrics[0]
+    del lyrics[-1]
+    lyrics = "".join(lyrics)
+    print(lyrics)
+    output.append(lyrics)
 
+    return output
 
 # def output_lyrics_loop(sp, genius):
 
