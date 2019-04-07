@@ -1,8 +1,13 @@
-DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS song;
+DROP TABLE IF EXISTS artists;
 
 CREATE TABLE song (
-  songid int IDENTITY(1,1) PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT,
-  artists TEXT,
   lyrics TEXT
+);
+
+CREATE TABLE artists (
+    artist TEXT,
+    songname INTEGER
 );

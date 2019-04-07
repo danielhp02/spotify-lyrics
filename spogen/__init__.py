@@ -5,7 +5,7 @@ import spotipy
 import spotipy.util as util
 import lyricsgenius
 from multiprocessing import Process, Value
-from flask import Flask
+from flask import Flask, render_template
 
 
 def create_app(test_config=None):
@@ -39,6 +39,7 @@ def create_app(test_config=None):
 
     from . import lyrics
     objects = lyrics.init(spotipy, util, lyricsgenius)
+
     # p = Process(target=lyrics.output_lyrics_loop, args=(objects["spotipy"], objects["genius"],))
     # p.start()
     # app.run(debug=True, use_reloader=False)
@@ -46,6 +47,8 @@ def create_app(test_config=None):
     # lyrics.output_lyrics_loop(objects["spotipy"], objects["genius"])
     @app.route('/')
     def root():
-        return db.query_db("SELECT * FROM song WHERE songid = (SELECT MAX(songid) FROM song)")
+        lyrics.get_song_data(objects["spotipy"], objects["genius"])
+        current_song_string = lyrics.print_track()
+        return render_template('base.html', text=current_song_string)
 
     return app

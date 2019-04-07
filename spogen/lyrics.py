@@ -5,8 +5,10 @@ from multiprocessing import Process, Value
 from . import db
 
 import click
-from flask import current_app, g
+from flask import current_app, g, render_template
 from flask.cli import with_appcontext
+
+current_song_id = 0
 
 # spotify data
 def init(spotipy, util, lyricsgenius):
@@ -55,10 +57,50 @@ def get_lyrics(genius, song):
 
 def get_song_data(sp, genius):
     song_data = get_track(sp)
-    if db.query_db("SELCT name FROM song WHERE name = ?", (song_data['name'])) is not None:
-        lyrics = get_lyrics(genius, song)
-        db.query_db("INSERT INTO song (name, artists, lyrics) VALUES (?, ?, ?)",
-                    (song_data['name'], song_data['artist'], lyrics))
+    if db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],)) == []:
+        print("Song not found in database. Song will be added.")
+        print(type(db.query_db("SELECT name FROM song WHERE name = ?", (song_data['name'],))))
+        lyrics = get_lyrics(genius, song_data)
+        print(type(db.query_db("INSERT INTO song (name, lyrics) VALUES (?, ?)", (str(song_data['name']), lyrics,))))
+
+        for artist in song_data["artist"]:
+            db.query_db("INSERT INTO artists (artist, songname) VALUES (?, ?)", (str(artist), str(song_data['name']),))
+
+        current_song_id = db.query_db("SELECT id FROM song WHERE id = (SELECT MAX(id) FROM song)")[0]["id"]
+        print("current_song_id:", current_song_id)
+
+        db.get_db().commit() # Saves database
+        print("Current song successfully entered into database.")
+    else:
+        print("Song is already in database.")
+        current_song_id = db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],))
+        print("current_song_id:", current_song_id)
+
+def print_track():
+    current_song = db.query_db("SELECT * FROM song WHERE id = (SELECT MAX(id) FROM song)")[0]
+    artists = db.query_db("SELECT * FROM artists WHERE songname = ?", (current_song["name"],))
+
+    print("type(current_song):", type(current_song))
+    print("artists:", artists[0][0])
+
+    if len(artists) == 1: # number of artists
+        print("one artist")
+        current_song_string = " ".join([current_song['name'], 'by', str(artists[0][0]), 'is now playing.'])
+        return current_song_string
+    else:
+        print("more than one artist")
+        artist_string = [artists[0][0]]
+        for index in range(1, len(artists)):
+            artist = artists[index][0]
+            if artist == artists[-1][0]:
+                artist_string.append(' and ' + str(artist))
+            else:
+                artist_string.append(', ' + str(artist))
+        artist_string = ''.join(artist_string)
+        current_song_string = " ".join([current_song['name'], 'by', str(artist_string), 'is now playing.'])
+        return current_song_string
+
+
 
 # def output_lyrics_loop(sp, genius):
 
@@ -74,20 +116,6 @@ def get_song_data(sp, genius):
 
             # global_data.set_currently_playing_song(current_song['name'], current_song['artist'], lyrics)
             # print(global_data.currently_playing_song)
-
-def print_track(current_song): # Change later, maybe to output a string or list of formatted strings (eg. [title, [artist1, artist2]])
-    if len(current_song['artist']) == 1:
-        print(current_song['name'], 'by', str(current_song['artist'][0]), 'is now playing.')
-    else:
-        artist_string = [current_song['artist'][0]]
-        for index in range(1, len(current_song['artist'])):
-            artist = current_song['artist'][index]
-            if artist == current_song['artist'][-1]:
-                artist_string.append(' and ' + str(artist))
-            else:
-                artist_string.append(', ' + str(artist))
-        artist_string = ''.join(artist_string)
-        print(current_song['name'], 'by', str(artist_string), 'is now playing.')
 
 # @app.route('/')
 # def index():
