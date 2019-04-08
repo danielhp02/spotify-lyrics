@@ -33,9 +33,9 @@ At the moment, tokens must be manually added. Support for oAuth 2.0 is planned t
 * Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/) and log in.
 * Create a new app. Name it whatever, I called it `spotify-lyrics`. Set the redirect URI to `http://localhost/`
 * Now if you go into the app, you can get the client id and secret. You'll want to copy those into `tokens.json`. Also set your redirect URI in `tokens.json` to `http://localhost/` as well.
-* Go to the [Genius Developers](https://genius.com/developers) page and create an API client.
+* Go to the [Genius API Clients](https://genius.com/api-clients) page and create an API client.
 * For the app name, again doesn't really matter, but you should name it the same as the Spotify one. Set the "App Website URL" to `http://localhost/` or the [Github page](https://github.com/danielhp02/spotify-lyrics/).
-* Copy the client ID token into `tokens.json`.
+* Copy the client access token into `tokens.json`.
 
 ## Running the program
 To run, use `flask run`. If everything is set up correctly, it **should** work.
