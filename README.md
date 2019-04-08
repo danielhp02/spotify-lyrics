@@ -2,7 +2,7 @@
 Gets current track from Spotify, gets the lyrics from Genius and outputs to a Flask app.
 
 ## Dependencies
-* [spotipy](https://github.com/plamere/spotipy) - Used for getting current song data from Spotify
+* [spotipy](https://github.com/plamere/spotipy) - Used for getting current song data from Spotify; MAKE SURE YOU BUILD FROM SOURCE DON'T USE PACAKAGE MANAGER
   * [Requests](https://github.com/kennethreitz/requests) - Required by spotipy
 * [LyricsGenius](https://github.com/johnwmillr/LyricsGenius) - Used for getting lyrics from Genius
 * [Flask](http://flask.pocoo.org/docs/1.0/)
