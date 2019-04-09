@@ -1,5 +1,6 @@
 import sys
 import simplejson
+import spotipy
 from multiprocessing import Process, Value
 # import sqlite3
 from . import db
@@ -13,7 +14,7 @@ current_song_id = 0
 # spotify data
 def init(spotipy, util, lyricsgenius):
     scope = 'user-read-playback-state'
-    username = "dandalf21" # <-- Change to your Spotify username
+    username = "shawarmawolf" # <-- Change to your Spotify username
 
     # Load tokens
     with open('./tokens.json', 'r') as json_file:
@@ -24,7 +25,6 @@ def init(spotipy, util, lyricsgenius):
     genius = lyricsgenius.Genius(tokens["genius"]["token"])
 
     sp = spotipy.Spotify(auth=token)
-
     return {"spotipy":  sp,
             "genius":   genius}
 
@@ -57,8 +57,18 @@ def get_lyrics(genius, song):
         return genius.search_song(song["name"], song["artist"][0]).lyrics
     except AttributeError:
         return "Lyrics not found."
+    except TypeError:
+        return 'You are not currently playing a song.'
+
+def get_playing_status(sp):
+    # Check if user is currently playing a song
+    if sp.current_playback() != None:
+        return True
+    else: 
+        return False
 
 def get_song_data(sp, genius):
+    # if sp.current_playback() is not None:
     song_data = get_track(sp)
     if db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],)) == []:
         print("Song not found in database. Song will be added.")
@@ -78,6 +88,8 @@ def get_song_data(sp, genius):
         print("Song is already in database.")
         current_song_id = db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],))[0]["id"]
         print("current_song_id:", current_song_id)
+    # else:
+    #     return 'You are not currently playing a song.'
 
 def print_track():
     current_song = db.query_db("SELECT * FROM song WHERE id = (SELECT MAX(id) FROM song)")[0]

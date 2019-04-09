@@ -5,7 +5,6 @@ import lyricsgenius
 from multiprocessing import Process, Value
 from flask import Flask, render_template
 
-
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -27,10 +26,10 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
+    # # a simple page that says hello
+    # @app.route('/hello')
+    # def hello():
+    #     return 'Hello, World!'
 
     from . import db
     db.init_app(app)
@@ -45,8 +44,11 @@ def create_app(test_config=None):
     # lyrics.output_lyrics_loop(objects["spotipy"], objects["genius"])
     @app.route('/')
     def root():
-        lyrics.get_song_data(objects["spotipy"], objects["genius"])
-        song_details = lyrics.print_track()
-        return render_template('base.html', song_text=song_details[0], lyrics=song_details[1])
+        if lyrics.get_playing_status(objects['spotipy']):
+            lyrics.get_song_data(objects["spotipy"], objects["genius"])
+            song_details = lyrics.print_track()
+            return render_template('base.html', song_text=song_details[0], lyrics=song_details[1])
+        else:
+            return render_template('base.html', song_text='No song currently playing', lyrics='')
 
     return app
