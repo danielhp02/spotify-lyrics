@@ -116,23 +116,26 @@ def get_song_data(sp, genius):
     return current_song_id
 
 def print_track(songid):
-    current_song = db.query_db("SELECT * FROM SONG WHERE SONGID = ?", (songid,))
-    album = db.query_db("SELECT * FROM ALBUM WHERE ALBUMID == ?", (current_song[0]['ALBUMID'],))
+    song = db.query_db("SELECT * FROM SONG WHERE SONGID = ?", (songid,))
+    album = db.query_db("SELECT * FROM ALBUM WHERE ALBUMID == ?", (song[0]['ALBUMID'],))
     artist = db.query_db("SELECT * FROM ARTIST WHERE ARTISTID == ?", (album[0]['ARTISTID'],))
 
-    lyrics = list(repr(current_song[0]["LYRICS"]).replace(r"\n", "<br>"))
+    lyrics = list(repr(song[0]["LYRICS"]).replace(r"\n", "<br>"))
     del lyrics[0]
     del lyrics[-1]
     lyrics = "".join(lyrics)
 
-    output = {  'name': current_song[0]['SONGNAME'],
+    output = {  'name': song[0]['SONGNAME'],
                 'album': album[0]['ALBUMNAME'],
                 'artist': artist[0]['ARTISTNAME'],
                 'albumartbig': album[0]['ALBUMARTBIG'],
                 'albumartmed': album[0]['ALBUMARTMED'],
                 'albumartsml': album[0]['ALBUMARTSML'],
-                'tracknr': current_song[0]['TRACKNR'],
-                'lyrics': lyrics
+                'tracknr': song[0]['TRACKNR'],
+                'lyrics': lyrics,
+                'songid': song[0]['SONGID'],
+                'albumid': album[0]['ALBUMID'],
+                'artistid': artist[0]['ARTISTID']
     }
     return output
 

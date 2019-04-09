@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel='icon' type='image/jpg' href={{albumn_art_thumbnail}}>
+        <link rel='icon' type='image/jpg' href={{album_art_thumbnail}}>
         <title>Now playing: {{song_name}} by {{song_artist}}</title>
     </head>
     <body>
@@ -14,9 +14,9 @@
                     Album: 
                 </th>
                 <td>
-                    {{song_name}} <br>
-                    {{song_artist}} <br>
-                    {{song_album}}
+                    <a href='https://open.spotify.com/track/{{songid}}'>{{song_name}}</a> <br>
+                    <a href='https://open.spotify.com/album/{{albumid}}'>{{song_album}}</a> <br>
+                    <a href='https://open.spotify.com/artist/{{artistid}}'>{{song_artist}}</a>
                 </td>
                 <td>
                     <img src={{album_art}} />
