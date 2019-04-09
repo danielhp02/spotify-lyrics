@@ -1,7 +1,9 @@
 # spotify-lyrics
+
 Gets current track from Spotify, gets the lyrics from Genius and outputs to a Flask app.
 
 ## Dependencies
+
 * [spotipy](https://github.com/plamere/spotipy) - Used for getting current song data from Spotify; MAKE SURE YOU BUILD FROM SOURCE DON'T USE PACAKAGE MANAGER
   * [Requests](https://github.com/kennethreitz/requests) - Required by spotipy
 * [LyricsGenius](https://github.com/johnwmillr/LyricsGenius) - Used for getting lyrics from Genius
@@ -14,21 +16,29 @@ Gets current track from Spotify, gets the lyrics from Genius and outputs to a Fl
 * [SimpleJSON](https://simplejson.readthedocs.io/) - Used for reading the tokens file
 
 ## Set up
+
 The following set up guide is written under the assumption that you are using a Unix based shell. If not, I *highly* recommend you get one. I use Ubuntu through [WSL (Windows Subsystem for Linux)](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
+
 ### Code adjustments
+
 * Change the `username` string on line 16 of `./spogen/lyrics.py` to your Spotify username.
 
 ### Console
+
 * Navigate to the application directory ([whatever]/spotify-lyrics)
 * Run the following commands to set up Flask:
-```
+
+```bash
 export FLASK_APP="spogen"
 export FLASK_ENV=development
 ```
+
 * Set up the database with `flask init-db`
 
 ### Tokens
+
 At the moment, tokens must be manually added. Support for oAuth 2.0 is planned to be implemented soon.
+
 * Duplicate `./tokens.dummy.json` and rename it to `tokens.json`.
 * Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/) and log in.
 * Create a new app. Name it whatever, I called it `spotify-lyrics`. Set the redirect URI to `http://localhost/`
@@ -38,4 +48,5 @@ At the moment, tokens must be manually added. Support for oAuth 2.0 is planned t
 * Copy the client access token into `tokens.json`.
 
 ## Running the program
+
 To run, use `flask run`. If everything is set up correctly, it **should** work.
