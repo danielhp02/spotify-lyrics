@@ -1,3 +1,5 @@
 setup oauth
 host on raspberry pi
 autorefresh page on song change
+going back to previously played songs doesnt work
+sql resets when program resets
