@@ -25,7 +25,7 @@ The following set up guide is written under the assumption that you are using a 
 
 ### Console
 
-Run `. ./int.sh`
+Run `. ./init.sh`
 
 ### Tokens
 
