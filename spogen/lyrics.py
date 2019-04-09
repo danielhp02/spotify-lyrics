@@ -41,16 +41,24 @@ def get_artist(song):
         artists.append(artist['name'])
     return artists
 
+# returns a list of all the links to all art sizes
+def get_art(song):
+    art = []
+    for i in song['album']['images']:
+        art.append(i['url'])
+    return art
+
 def get_track(sp):
     current_playback = sp.current_playback()
-
-    if current_playback is not None:
-        current_playback = current_playback['item']
-        return {'name':  current_playback['name'],
-                'artist': get_artist(current_playback)}
-    else:
-        return {'name':  None,
-                'artist': None}
+    print(current_playback)
+    current_playback = current_playback['item']
+    art = get_art(current_playback)
+    return {'name':  current_playback['name'],
+            'artist': get_artist(current_playback),
+            'album': current_playback['album']['name'],
+            'album_art_big': art[0],
+            'album_art_med': art[1],
+            'album_art_sml': art[2]}
 
 def get_lyrics(genius, song):
     try:
@@ -67,8 +75,15 @@ def get_playing_status(sp):
     else: 
         return False
 
+# def get_song_metadata(sp):
+#     track_data_unformatted = sp.current_user_playing_track()
+#     track_data = get_track(sp)
+#     track_data['album_art'] = track_data_unformatted['item']['album']['images'][1]['url']
+#     track_data['album'] = track_data_unformatted['item']['album']['name']
+#     track_data['album_art_thumbnail'] = track_data_unformatted['item']['album']['images'][2]['url']
+#     return track_data
+
 def get_song_data(sp, genius):
-    # if sp.current_playback() is not None:
     song_data = get_track(sp)
     if db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],)) == []:
         print("Song not found in database. Song will be added.")
@@ -88,8 +103,6 @@ def get_song_data(sp, genius):
         print("Song is already in database.")
         current_song_id = db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],))[0]["id"]
         print("current_song_id:", current_song_id)
-    # else:
-    #     return 'You are not currently playing a song.'
 
 def print_track():
     current_song = db.query_db("SELECT * FROM song WHERE id = (SELECT MAX(id) FROM song)")[0]

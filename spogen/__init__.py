@@ -46,8 +46,10 @@ def create_app(test_config=None):
     def root():
         if lyrics.get_playing_status(objects['spotipy']):
             lyrics.get_song_data(objects["spotipy"], objects["genius"])
+            # lyrics.get_track(objects["spotipy"])
             song_details = lyrics.print_track()
-            return render_template('base.html', song_text=song_details[0], lyrics=song_details[1])
+            song_metadata = lyrics.get_track(objects['spotipy'])
+            return render_template('base.html', song_album=song_metadata['album'], song_name=song_metadata['name'], song_artist=song_metadata['artist'][0], lyrics=song_details[1], album_art=song_metadata['album_art_med'],albumn_art_thumbnail=song_metadata['album_art_sml'])
         else:
             return render_template('base.html', song_text='No song currently playing', lyrics='')
 
