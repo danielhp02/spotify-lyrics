@@ -50,7 +50,6 @@ def get_art(song):
 
 def get_track(sp):
     current_playback = sp.current_playback()
-    print(current_playback)
     current_playback = current_playback['item']
     art = get_art(current_playback)
     return {'name':  current_playback['name'],
@@ -65,8 +64,6 @@ def get_lyrics(genius, song):
         return genius.search_song(song["name"], song["artist"][0]).lyrics
     except AttributeError:
         return "Lyrics not found."
-    except TypeError:
-        return 'You are not currently playing a song.'
 
 def get_playing_status(sp):
     # Check if user is currently playing a song
@@ -104,8 +101,8 @@ def get_song_data(sp, genius):
         current_song_id = db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],))[0]["id"]
         print("current_song_id:", current_song_id)
 
-def print_track():
-    current_song = db.query_db("SELECT * FROM song WHERE id = (SELECT MAX(id) FROM song)")[0]
+def print_track(name):
+    current_song = db.query_db("SELECT * FROM song WHERE name = ?", (name,))[0]
     artists = db.query_db("SELECT * FROM artists WHERE songname = ?", (current_song["name"],))
 
     # print("type(current_song):", type(current_song))
