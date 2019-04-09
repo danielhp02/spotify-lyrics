@@ -25,15 +25,7 @@ The following set up guide is written under the assumption that you are using a 
 
 ### Console
 
-* Navigate to the application directory ([whatever]/spotify-lyrics)
-* Run the following commands to set up Flask:
-
-```bash
-export FLASK_APP="spogen"
-export FLASK_ENV=development
-```
-
-* Set up the database with `flask init-db`
+Run . ./int.sh
 
 ### Tokens
 
