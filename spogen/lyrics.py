@@ -35,28 +35,21 @@ def init(spotipy, util, lyricsgenius):
 #     sys.exit()
 
 # Define functions
-def get_artist(song):
-    artists = []
-    for artist in song['artists']:
-        artists.append(artist['name'])
-    return artists
+def get_artists(song):
+    if len(song) == 1:
+        return song[0]['name']
+    else:
+        artists = []
+        print('heyo')
+        for i in range(len(song)):
+            artists.append(song[i]['name'])
+        return ', '.join(artists)
 
-# returns a list of all the links to all art sizes
 def get_art(song):
     art = []
     for i in song['album']['images']:
         art.append(i['url'])
     return art
-
-def concat_list(l):
-    out = ''
-    for s in l:
-        if out == '':
-            out = s
-        else:
-            out = out + ', ' + s
-    return out
-
 
 def get_track(sp):
     current_playback = sp.current_playback()
@@ -66,7 +59,7 @@ def get_track(sp):
             'artistid': current_playback['artists'][0]['id'],
             'albumid': current_playback['album']['id'],
             'songid': current_playback['id'],
-            'artist': current_playback['artists'][0]['name'],
+            'artist': get_artists(current_playback['artists']),
             'album': current_playback['album']['name'],
             'albumartbig': art[0],
             'albumartmed': art[1],
@@ -88,22 +81,43 @@ def get_playing_status(sp):
         return False
 
 def get_song_data(sp, genius):
-
+    
     song_data = get_track(sp)
-    print(song_data['artist'])
+    print(song_data)
+    artistid = song_data['artistid']
+    artist = song_data['artist']
+    print(artist)
+    # print(artistid)
     if db.query_db("SELECT SONGID FROM SONG WHERE SONGID = ?", (song_data['songid'],)) == []:
-        if db.query_db('SELECT * FROM ARTIST WHERE ARTISTID = ?', (song_data['artistid'],)) == []:
-            print('Artist not found in database. Artist will be added.')
-            db.query_db('INSERT INTO ARTIST (ARTISTID, ARTISTNAME) VALUES (?, ?)', (song_data['artistid'], song_data['artist']))
-
-        if db.query_db('SELECT * FROM ALBUM WHERE ALBUMID = ?', (song_data['albumid'],)) == []:
-            print('Album not found in database. Album will be added.')
-            db.query_db('INSERT INTO ALBUM (ALBUMID, ARTISTID, ALBUMNAME, ALBUMARTBIG, ALBUMARTMED, ALBUMARTSML) VALUES (?, ?, ?, ?, ?, ?)', (song_data['albumid'], song_data['artistid'], song_data['album'], song_data['albumartbig'], song_data['albumartmed'], song_data['albumartsml'],))
-
+        if isinstance(artistid, str):
+            print(artistid)
+            print(artist)
+            if db.query_db('SELECT * FROM ARTIST WHERE ARTISTID = ?', (artistid,)) == []:
+                print('Artist not found in database. Artist will be added.')
+                db.query_db('INSERT INTO ARTIST (ARTISTID, ARTISTNAME) VALUES (?, ?)', (artistid, artist))
+            if db.query_db('SELECT * FROM ALBUM WHERE ALBUMID = ?', (song_data['albumid'],)) == []:
+                print('Album not found in database. Album will be added.')
+                db.query_db('INSERT INTO ALBUM (ALBUMID, ARTISTID, ALBUMNAME, ALBUMARTBIG, ALBUMARTMED, ALBUMARTSML) VALUES (?, ?, ?, ?, ?, ?)', (song_data['albumid'], song_data['artistid'], song_data['album'], song_data['albumartbig'], song_data['albumartmed'], song_data['albumartsml'],))
+            else:
+                for s, t in zip(artistid, artist):
+                    if db.query_db('SELECT * FROM ARTIST WHERE ARTISTID = ?', (s,)) == []:
+                        print('Artist not found in database. Artist will be added. [MULTIPLE ARTISTS]')
+                        db.query_db('INSERT INTO ARTIST (ARTISTID, ARTISTNAME) VALUES (?, ?)', (s, t))
+            
+            
+                
+            if db.query_db('SELECT * FROM ALBUM WHERE ALBUMID = ?', (song_data['albumid'],)) == []:
+                print('Album not found in database. Album will be added.')
+                db.query_db('INSERT INTO ALBUM (ALBUMID, ARTISTID, ALBUMNAME, ALBUMARTBIG, ALBUMARTMED, ALBUMARTSML) VALUES (?, ?, ?, ?, ?, ?)', (song_data['albumid'], song_data['artistid'][0], song_data['album'], song_data['albumartbig'], song_data['albumartmed'], song_data['albumartsml'],))
+    
         print("Song not found in database. Song will be added.")
         lyrics = get_lyrics(genius, song_data)
-        db.query_db("INSERT INTO SONG (SONGID, ALBUMID, SONGNAME, LYRICS, TRACKNR) VALUES (?, ?, ?, ?, ?)", (song_data['songid'], song_data['albumid'], song_data['name'], lyrics, song_data['tracknr'],))
-
+        db.query_db("INSERT INTO SONG (SONGID, ALBUMID, ARTIST, SONGNAME, LYRICS, TRACKNR) VALUES (?, ?, ?, ?, ?, ?)", (song_data['songid'], song_data['albumid'], song_data['artist'], song_data['name'], lyrics, song_data['tracknr'],))
+            
+                    
+        
+        
+        
         current_song_id = song_data['songid']
         print("current_song_id:", current_song_id)
 
@@ -120,14 +134,22 @@ def print_track(songid):
     album = db.query_db("SELECT * FROM ALBUM WHERE ALBUMID == ?", (song[0]['ALBUMID'],))
     artist = db.query_db("SELECT * FROM ARTIST WHERE ARTISTID == ?", (album[0]['ARTISTID'],))
 
+
+
     lyrics = list(repr(song[0]["LYRICS"]).replace(r"\n", "<br>"))
     del lyrics[0]
     del lyrics[-1]
     lyrics = "".join(lyrics)
 
+    artist_out = song[0]['ARTIST']
+    print('cool')
+    artistid_out = artist[0]['ARTISTID']
+
+    print(artist_out)
+
     output = {  'name': song[0]['SONGNAME'],
                 'album': album[0]['ALBUMNAME'],
-                'artist': artist[0]['ARTISTNAME'],
+                'artist': artist_out,
                 'albumartbig': album[0]['ALBUMARTBIG'],
                 'albumartmed': album[0]['ALBUMARTMED'],
                 'albumartsml': album[0]['ALBUMARTSML'],
@@ -135,7 +157,7 @@ def print_track(songid):
                 'lyrics': lyrics,
                 'songid': song[0]['SONGID'],
                 'albumid': album[0]['ALBUMID'],
-                'artistid': artist[0]['ARTISTID']
+                'artistid': artistid_out
     }
     return output
 
