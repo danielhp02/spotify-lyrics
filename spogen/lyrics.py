@@ -1,4 +1,7 @@
 import sys
+import urllib.request
+import urllib.parse
+import re
 import simplejson
 import spotipy
 from multiprocessing import Process, Value
@@ -147,6 +150,12 @@ def print_track(songid):
 
     print(artist_out)
 
+    query_string = urllib.parse.urlencode({'search_query': (song[0]['SONGNAME'] + artist_out)})
+    html_content = urllib.request.urlopen("https://www.youtube.com/results?" + query_string)
+    search_results = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
+    video_link = 'https://www.youtube.com/embed/' + search_results[0]
+    print(video_link)
+
     output = {  'name': song[0]['SONGNAME'],
                 'album': album[0]['ALBUMNAME'],
                 'artist': artist_out,
@@ -157,7 +166,8 @@ def print_track(songid):
                 'lyrics': lyrics,
                 'songid': song[0]['SONGID'],
                 'albumid': album[0]['ALBUMID'],
-                'artistid': artistid_out
+                'artistid': artistid_out,
+                'video': video_link
     }
     return output
 
