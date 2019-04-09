@@ -3,25 +3,34 @@
     <head>
         <link rel='icon' type='image/jpg' href={{album_art_thumbnail}}>
         <title>Now playing: {{song_name}} by {{song_artist}}</title>
+        <style>
+        #top {
+            width: 100%;   
+            top:0px;
+            position: fixed;   
+        }
+        </style>
     </head>
     <body>
         <p style='float:inline-start'>{{lyrics|safe}}</p>
-        <table style='text-align: left;float:inline-end'>
-            <tr>
-                <th>
-                    Track: <br>
-                    Album: <br>
-                    Artist:
-                </th>
-                <td>
-                    <a href='https://open.spotify.com/track/{{songid}}'>{{song_name}}</a> <br>
-                    <a href='https://open.spotify.com/album/{{albumid}}'>{{song_album}}</a> <br>
-                    <a href='https://open.spotify.com/artist/{{artistid}}'>{{song_artist}}</a>
-                </td>
-                <td>
-                    <img src={{album_art}} />
-                </td>
-            </tr>
-        </table>
+        <div id='top'>
+            <table style='text-align: left;float:inline-end'>
+                <tr>
+                    <th>
+                        Track: <br>
+                        Album: <br>
+                        Artist:
+                    </th>
+                    <td>
+                        <a href='https://open.spotify.com/track/{{songid}}'>{{song_name}}</a> <br>
+                        <a href='https://open.spotify.com/album/{{albumid}}'>{{song_album}}</a> <br>
+                        <a href='https://open.spotify.com/artist/{{artistid}}'>{{song_artist}}</a>
+                    </td>
+                    <td>
+                        <img src={{album_art}} />
+                    </td>
+                </tr>
+            </table>
+        </div>
     </body>
 </html>
