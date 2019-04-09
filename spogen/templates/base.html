@@ -1,10 +1,28 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>test</title>
+        <link rel='stylesheet' href='styles.css'>
+        <link rel='icon' type='image/jpg' href={{albumn_art_thumbnail}}>
+        <title>Now playing: {{song_name}} by {{song_artist}}</title>
     </head>
     <body>
-        <p>{{song_text}}</p>
-        <p>{{lyrics|safe}}</p>
+        <p style='float:inline-start'>{{lyrics|safe}}</p>
+        <table style='text-align: left;float:inline-end'>
+            <tr>
+                <th>
+                    Track: <br>
+                    Artist: <br>
+                    Album: 
+                </th>
+                <td>
+                    {{song_name}} <br>
+                    {{song_artist}} <br>
+                    {{song_album}}
+                </td>
+                <td>
+                    <img src={{album_art}} />
+                </td>
+            </tr>
+        </table>
     </body>
 </html>
