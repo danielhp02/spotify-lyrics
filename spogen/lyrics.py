@@ -48,20 +48,35 @@ def get_art(song):
         art.append(i['url'])
     return art
 
+def concat_list(l):
+    out = ''
+    for s in l:
+        if out == '':
+            out = s
+        else:
+            out = out + ', ' + s
+    return out
+
+
 def get_track(sp):
     current_playback = sp.current_playback()
     current_playback = current_playback['item']
     art = get_art(current_playback)
     return {'name':  current_playback['name'],
-            'artist': get_artist(current_playback),
+            'artistid': current_playback['artists'][0]['id'],
+            'albumid': current_playback['album']['id'],
+            'songid': current_playback['id'],
+            'artist': current_playback['artists'][0]['name'],
             'album': current_playback['album']['name'],
-            'album_art_big': art[0],
-            'album_art_med': art[1],
-            'album_art_sml': art[2]}
+            'albumartbig': art[0],
+            'albumartmed': art[1],
+            'albumartsml': art[2],
+            'tracknr': current_playback['track_number']}
 
 def get_lyrics(genius, song):
     try:
-        return genius.search_song(song["name"], song["artist"][0]).lyrics
+        print(song["artist"])
+        return genius.search_song(song["name"], song["artist"]).lyrics
     except AttributeError:
         return "Lyrics not found."
 
@@ -72,71 +87,53 @@ def get_playing_status(sp):
     else: 
         return False
 
-# def get_song_metadata(sp):
-#     track_data_unformatted = sp.current_user_playing_track()
-#     track_data = get_track(sp)
-#     track_data['album_art'] = track_data_unformatted['item']['album']['images'][1]['url']
-#     track_data['album'] = track_data_unformatted['item']['album']['name']
-#     track_data['album_art_thumbnail'] = track_data_unformatted['item']['album']['images'][2]['url']
-#     return track_data
-
 def get_song_data(sp, genius):
+
     song_data = get_track(sp)
-    if db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],)) == []:
+    print(song_data['artist'])
+    if db.query_db("SELECT SONGID FROM SONG WHERE SONGID = ?", (song_data['songid'],)) == []:
+        if db.query_db('SELECT * FROM ARTIST WHERE ARTISTID = ?', (song_data['artistid'],)) == []:
+            print('Artist not found in database. Artist will be added.')
+            db.query_db('INSERT INTO ARTIST (ARTISTID, ARTISTNAME) VALUES (?, ?)', (song_data['artistid'], song_data['artist']))
+
+        if db.query_db('SELECT * FROM ALBUM WHERE ALBUMID = ?', (song_data['albumid'],)) == []:
+            print('Album not found in database. Album will be added.')
+            db.query_db('INSERT INTO ALBUM (ALBUMID, ARTISTID, ALBUMNAME, ALBUMARTBIG, ALBUMARTMED, ALBUMARTSML) VALUES (?, ?, ?, ?, ?, ?)', (song_data['albumid'], song_data['artistid'], song_data['album'], song_data['albumartbig'], song_data['albumartmed'], song_data['albumartsml'],))
+
         print("Song not found in database. Song will be added.")
-        db.query_db("SELECT name FROM song WHERE name = ?", (song_data['name'],))
         lyrics = get_lyrics(genius, song_data)
-        db.query_db("INSERT INTO song (name, lyrics) VALUES (?, ?)", (str(song_data['name']), lyrics,))
+        db.query_db("INSERT INTO SONG (SONGID, ALBUMID, SONGNAME, LYRICS, TRACKNR) VALUES (?, ?, ?, ?, ?)", (song_data['songid'], song_data['albumid'], song_data['name'], lyrics, song_data['tracknr'],))
 
-        for artist in song_data["artist"]:
-            db.query_db("INSERT INTO artists (artist, songname) VALUES (?, ?)", (str(artist), str(song_data['name']),))
-
-        current_song_id = db.query_db("SELECT id FROM song WHERE id = (SELECT MAX(id) FROM song)")[0]["id"]
+        current_song_id = song_data['songid']
         print("current_song_id:", current_song_id)
 
         db.get_db().commit() # Saves database
         print("Current song successfully entered into database.")
     else:
         print("Song is already in database.")
-        current_song_id = db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],))[0]["id"]
+        current_song_id = song_data['songid']
         print("current_song_id:", current_song_id)
+    return current_song_id
 
-def print_track(name):
-    current_song = db.query_db("SELECT * FROM song WHERE name = ?", (name,))[0]
-    artists = db.query_db("SELECT * FROM artists WHERE songname = ?", (current_song["name"],))
+def print_track(songid):
+    current_song = db.query_db("SELECT * FROM SONG WHERE SONGID = ?", (songid,))
+    album = db.query_db("SELECT * FROM ALBUM WHERE ALBUMID == ?", (current_song[0]['ALBUMID'],))
+    artist = db.query_db("SELECT * FROM ARTIST WHERE ARTISTID == ?", (album[0]['ARTISTID'],))
 
-    # print("type(current_song):", type(current_song))
-    # print("artists:", artists[0][0])
-
-    output = []
-
-    # Process song name and artists
-    if len(artists) == 1: # number of artists
-        print("This song has one artist.")
-        current_song_string = " ".join([current_song['name'], 'by', str(artists[0][0]), 'is now playing.'])
-        output.append(current_song_string)
-    else:
-        print("This song has multiple artists.")
-        artist_string = [artists[0][0]]
-        for index in range(1, len(artists)):
-            artist = artists[index][0]
-            if artist == artists[-1][0]:
-                artist_string.append(' and ' + str(artist))
-            else:
-                artist_string.append(', ' + str(artist))
-        artist_string = ''.join(artist_string)
-        current_song_string = " ".join([current_song['name'], 'by', str(artist_string), 'is now playing.'])
-        output.append(current_song_string)
-
-    # Process lyrics
-    # print("lyrics:", repr(current_song["lyrics"]))
-    lyrics = list(repr(current_song["lyrics"]).replace(r"\n", "<br>"))
+    lyrics = list(repr(current_song[0]["LYRICS"]).replace(r"\n", "<br>"))
     del lyrics[0]
     del lyrics[-1]
     lyrics = "".join(lyrics)
-    # print(lyrics)
-    output.append(lyrics)
 
+    output = {  'name': current_song[0]['SONGNAME'],
+                'album': album[0]['ALBUMNAME'],
+                'artist': artist[0]['ARTISTNAME'],
+                'albumartbig': album[0]['ALBUMARTBIG'],
+                'albumartmed': album[0]['ALBUMARTMED'],
+                'albumartsml': album[0]['ALBUMARTSML'],
+                'tracknr': current_song[0]['TRACKNR'],
+                'lyrics': lyrics
+    }
     return output
 
 # def output_lyrics_loop(sp, genius):
