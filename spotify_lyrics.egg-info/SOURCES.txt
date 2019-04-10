@@ -1,0 +1,10 @@
+README.md
+setup.py
+spogen/__init__.py
+spogen/db.py
+spogen/lyrics.py
+spotify_lyrics.egg-info/PKG-INFO
+spotify_lyrics.egg-info/SOURCES.txt
+spotify_lyrics.egg-info/dependency_links.txt
+spotify_lyrics.egg-info/requires.txt
+spotify_lyrics.egg-info/top_level.txt
