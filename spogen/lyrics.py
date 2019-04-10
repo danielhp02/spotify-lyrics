@@ -17,11 +17,11 @@ current_song_id = 0
 # spotify data
 def init(spotipy, util, lyricsgenius):
     scope = 'user-read-playback-state'
-    username = "shawarmawolf" # <-- Change to your Spotify username
 
     # Load tokens
     with open('./tokens.json', 'r') as json_file:
         tokens = simplejson.load(json_file)
+    username = tokens['username']
 
     # Authenticate Spotify and Genius
     token = util.prompt_for_user_token(username, scope, tokens["spotify"]['client_id'], tokens["spotify"]['client_secret'], tokens["spotify"]['redirect_uri'])
