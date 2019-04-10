@@ -4,13 +4,6 @@
         <link rel='icon' type='image/jpg' href={{album_art_thumbnail}}>
         <link rel='stylesheet' type='text/css' href="{{ url_for('static',filename='styles/styles.css') }}">
         <title>Now playing: {{song_name}} by {{song_artist}}</title>
-        <style>
-        #top {
-            width: 100%;   
-            top:0px;
-            position: fixed;   
-        }
-        </style>
     </head>
     <body>
         <p style='float:inline-start'>{{lyrics|safe}}</p>
