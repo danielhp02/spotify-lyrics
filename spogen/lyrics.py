@@ -43,7 +43,6 @@ def get_artists(song):
         return song[0]['name']
     else:
         artists = []
-        print('heyo')
         for i in range(len(song)):
             artists.append(song[i]['name'])
         return ', '.join(artists)
@@ -71,7 +70,6 @@ def get_track(sp):
 
 def get_lyrics(genius, song):
     try:
-        print(song["artist"])
         return genius.search_song(song["name"], song["artist"]).lyrics
     except AttributeError:
         return "Lyrics not found."
@@ -84,52 +82,45 @@ def get_playing_status(sp):
         return False
 
 def get_song_data(sp, genius):
-    
     song_data = get_track(sp)
-    print(song_data)
     artistid = song_data['artistid']
     artist = song_data['artist']
-    print(artist)
-    # print(artistid)
-    if db.query_db("SELECT SONGID FROM SONG WHERE SONGID = ?", (song_data['songid'],)) == []:
+    albumid = song_data['albumid']
+    album = song_data['album']
+    songname = song_data['name']
+    songid = song_data['songid']
+    if db.query_db("SELECT SONGID FROM SONG WHERE SONGID = ?", (songid,)) == []:
         if isinstance(artistid, str):
-            print(artistid)
-            print(artist)
             if db.query_db('SELECT * FROM ARTIST WHERE ARTISTID = ?', (artistid,)) == []:
-                print('Artist not found in database. Artist will be added.')
+                print('Artist %s not found in database. Artist will be added.' % artist)
                 db.query_db('INSERT INTO ARTIST (ARTISTID, ARTISTNAME) VALUES (?, ?)', (artistid, artist))
-            if db.query_db('SELECT * FROM ALBUM WHERE ALBUMID = ?', (song_data['albumid'],)) == []:
-                print('Album not found in database. Album will be added.')
-                db.query_db('INSERT INTO ALBUM (ALBUMID, ARTISTID, ALBUMNAME, ALBUMARTBIG, ALBUMARTMED, ALBUMARTSML) VALUES (?, ?, ?, ?, ?, ?)', (song_data['albumid'], song_data['artistid'], song_data['album'], song_data['albumartbig'], song_data['albumartmed'], song_data['albumartsml'],))
+            if db.query_db('SELECT * FROM ALBUM WHERE ALBUMID = ?', (albumid,)) == []:
+                print('Album %s not found in database. Album will be added.' % album)
+                db.query_db('INSERT INTO ALBUM (ALBUMID, ARTISTID, ALBUMNAME, ALBUMARTBIG, ALBUMARTMED, ALBUMARTSML) VALUES (?, ?, ?, ?, ?, ?)', (albumid, artistid, album, song_data['albumartbig'], song_data['albumartmed'], song_data['albumartsml'],))
             else:
                 for s, t in zip(artistid, artist):
                     if db.query_db('SELECT * FROM ARTIST WHERE ARTISTID = ?', (s,)) == []:
-                        print('Artist not found in database. Artist will be added. [MULTIPLE ARTISTS]')
+                        print('Artist %s not found in database. Artist will be added. [MULTIPLE ARTISTS]' % t)
                         db.query_db('INSERT INTO ARTIST (ARTISTID, ARTISTNAME) VALUES (?, ?)', (s, t))
-            
-            
-                
-            if db.query_db('SELECT * FROM ALBUM WHERE ALBUMID = ?', (song_data['albumid'],)) == []:
-                print('Album not found in database. Album will be added.')
-                db.query_db('INSERT INTO ALBUM (ALBUMID, ARTISTID, ALBUMNAME, ALBUMARTBIG, ALBUMARTMED, ALBUMARTSML) VALUES (?, ?, ?, ?, ?, ?)', (song_data['albumid'], song_data['artistid'][0], song_data['album'], song_data['albumartbig'], song_data['albumartmed'], song_data['albumartsml'],))
-    
-        print("Song not found in database. Song will be added.")
+                if db.query_db('SELECT * FROM ALBUM WHERE ALBUMID = ?', (albumid,)) == []:
+                    print('Album not found in database. Album will be added.')
+                    db.query_db('INSERT INTO ALBUM (ALBUMID, ARTISTID, ALBUMNAME, ALBUMARTBIG, ALBUMARTMED, ALBUMARTSML) VALUES (?, ?, ?, ?, ?, ?)', (albumid, artistid[0], album, song_data['albumartbig'], song_data['albumartmed'], song_data['albumartsml'],))
+        print("Song %s not found in database. Song will be added." % songname)
         lyrics = get_lyrics(genius, song_data)
-        db.query_db("INSERT INTO SONG (SONGID, ALBUMID, ARTIST, SONGNAME, LYRICS, TRACKNR) VALUES (?, ?, ?, ?, ?, ?)", (song_data['songid'], song_data['albumid'], song_data['artist'], song_data['name'], lyrics, song_data['tracknr'],))
+        db.query_db("INSERT INTO SONG (SONGID, ALBUMID, ARTIST, SONGNAME, LYRICS, TRACKNR) VALUES (?, ?, ?, ?, ?, ?)", (songid, albumid, artist, songname, lyrics, song_data['tracknr'],))
             
                     
         
         
         
-        current_song_id = song_data['songid']
+        current_song_id = songid
         print("current_song_id:", current_song_id)
 
         db.get_db().commit() # Saves database
         print("Current song successfully entered into database.")
     else:
-        print("Song is already in database.")
-        current_song_id = song_data['songid']
-        print("current_song_id:", current_song_id)
+        print("Song %s is already in database." % songname)
+        current_song_id = songid
     return current_song_id
 
 def print_track(songid):
