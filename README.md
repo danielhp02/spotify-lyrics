@@ -25,7 +25,7 @@ The following set up guide is written under the assumption that you are using a 
 
 ### Console
 
-Run `. ./init.sh`
+Run `sudo python3 setup.py install`
 
 ### Tokens
 
@@ -41,4 +41,4 @@ At the moment, tokens must be manually added. Support for oAuth 2.0 is planned t
 
 ## Running the program
 
-To run, use `flask run`. If everything is set up correctly, it **should** work.
+To run, use `. ./init.sh`. If everything is set up correctly, it **should** work.
