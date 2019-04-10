@@ -2,4 +2,3 @@ setup oauth
 host on raspberry pi
 autorefresh page on song change
 add music video support; youtube?
-spotify songs with videos fuck up

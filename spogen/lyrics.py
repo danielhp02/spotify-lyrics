@@ -68,6 +68,7 @@ def get_track(sp):
             'albumartsml': art[2],
             'tracknr': current_playback['track_number']}
 
+
 def get_lyrics(genius, song):
     try:
         return genius.search_song(song["name"], song["artist"]).lyrics
@@ -76,8 +77,12 @@ def get_lyrics(genius, song):
 
 def get_playing_status(sp):
     # Check if user is currently playing a song
-    if sp.current_playback() != None:
-        return True
+    current_playback = sp.current_playback()
+    if current_playback != None:
+        if current_playback['currently_playing_type'] == 'track':
+            return True
+        else:
+            return False
     else: 
         return False
 
@@ -136,16 +141,12 @@ def print_track(songid):
     lyrics = "".join(lyrics)
 
     artist_out = song[0]['ARTIST']
-    print('cool')
     artistid_out = artist[0]['ARTISTID']
-
-    print(artist_out)
 
     query_string = urllib.parse.urlencode({'search_query': (song[0]['SONGNAME'] + artist_out)})
     html_content = urllib.request.urlopen("https://www.youtube.com/results?" + query_string)
     search_results = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
     video_link = 'https://www.youtube.com/embed/' + search_results[0]
-    print(video_link)
 
     output = {  'name': song[0]['SONGNAME'],
                 'album': album[0]['ALBUMNAME'],
