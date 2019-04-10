@@ -26,22 +26,12 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # # a simple page that says hello
-    # @app.route('/hello')
-    # def hello():
-    #     return 'Hello, World!'
-
     from . import db
     db.init_app(app)
 
     from . import lyrics
     objects = lyrics.init(spotipy, util, lyricsgenius)
-
-    # p = Process(target=lyrics.output_lyrics_loop, args=(objects["spotipy"], objects["genius"],))
-    # p.start()
-    # app.run(debug=True, use_reloader=False)
-    # p.join()
-    # lyrics.output_lyrics_loop(objects["spotipy"], objects["genius"])
+    
     @app.route('/')
     def root():
         if lyrics.get_playing_status(objects['spotipy']):
