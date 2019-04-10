@@ -6,4 +6,4 @@ setup(  name='spotify-lyrics',
         author='Daniel H-P and Mitch H',
         url='https://github.com/danielhp02/spotify-lyrics/',
         packages=find_packages(),
-        install_requires=['spotipy', 'lyricsgenius', 'flask'])
+        install_requires=['spotipy', 'lyricsgenius', 'flask', 'simplejson'])
