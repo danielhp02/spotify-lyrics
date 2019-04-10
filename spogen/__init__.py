@@ -45,11 +45,8 @@ def create_app(test_config=None):
     @app.route('/')
     def root():
         if lyrics.get_playing_status(objects['spotipy']):
-            current_song_id = lyrics.get_song_data(objects["spotipy"], objects["genius"])
-            # lyrics.get_track(objects["spotipy"])
-            # song_metadata = lyrics.get_track(objects['spotipy'])
-            song_metadata = lyrics.print_track(current_song_id)
-            return render_template('base.html', song_album=song_metadata['album'], song_name=song_metadata['name'], song_artist=song_metadata['artist'], lyrics=song_metadata['lyrics'], album_art=song_metadata['albumartmed'],album_art_thumbnail=song_metadata['albumartsml'], songid=song_metadata['songid'], albumid=song_metadata['albumid'], artistid=song_metadata['artistid'], videolink=song_metadata['video'])
+            song_metadata = lyrics.get_song_data(objects["spotipy"], objects["genius"])
+            return render_template('base.html', song_album=song_metadata['album'], song_name=song_metadata['songname'], song_artist=song_metadata['artistlinks'], lyrics=song_metadata['lyrics'], album_art=song_metadata['albumart'][1],album_art_thumbnail=song_metadata['albumart'][2], songid=song_metadata['songid'], albumid=song_metadata['albumid'], videolink=song_metadata['videolink'])
         else:
             return render_template('noneplaying.html')
 

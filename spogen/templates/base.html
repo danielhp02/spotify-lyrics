@@ -18,7 +18,7 @@
                     <td>
                         <a href='https://open.spotify.com/track/{{songid}}'>{{song_name}}</a> <br>
                         <a href='https://open.spotify.com/album/{{albumid}}'>{{song_album}}</a> <br>
-                        <a href='https://open.spotify.com/artist/{{artistid}}'>{{song_artist}}</a>
+                        {{song_artist|safe}}
                     </td>
                     <td>
                         <img src={{album_art}} />
