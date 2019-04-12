@@ -4,6 +4,12 @@ import spotipy.util as util
 import lyricsgenius
 from multiprocessing import Process, Value
 from flask import Flask, render_template
+import time
+import schedule
+
+
+
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -26,32 +32,19 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # # a simple page that says hello
-    # @app.route('/hello')
-    # def hello():
-    #     return 'Hello, World!'
-
     from . import db
     db.init_app(app)
 
     from . import lyrics
     objects = lyrics.init(spotipy, util, lyricsgenius)
 
-    # p = Process(target=lyrics.output_lyrics_loop, args=(objects["spotipy"], objects["genius"],))
-    # p.start()
-    # app.run(debug=True, use_reloader=False)
-    # p.join()
-    # lyrics.output_lyrics_loop(objects["spotipy"], objects["genius"])
+    
     @app.route('/')
     def root():
         if lyrics.get_playing_status(objects['spotipy']):
-            current_song_id = lyrics.get_song_data(objects["spotipy"], objects["genius"])
-            # lyrics.get_track(objects["spotipy"])
-            # song_metadata = lyrics.get_track(objects['spotipy'])
-            song_metadata = lyrics.print_track(current_song_id)
-            
-            return render_template('base.html', song_album=song_metadata['album'], song_name=song_metadata['name'], song_artist=song_metadata['artist'], lyrics=song_metadata['lyrics'], album_art=song_metadata['albumartmed'],album_art_thumbnail=song_metadata['albumartsml'], songid=song_metadata['songid'], albumid=song_metadata['albumid'], artistid=song_metadata['artistid'], videolink=song_metadata['video'])
+            song_metadata = lyrics.get_song_data(objects["spotipy"], objects["genius"])
+            return render_template('base.html', song_album=song_metadata['album'], song_name=song_metadata['songname'], song_artist=song_metadata['artistlinks'], lyrics=song_metadata['lyrics'], album_art=song_metadata['albumart'][1],album_art_thumbnail=song_metadata['albumart'][2], songid=song_metadata['songid'], albumid=song_metadata['albumid'], videolink=song_metadata['videolink'])
         else:
-            return render_template('base.html', song_text='No song currently playing', lyrics='')
+            return render_template('noneplaying.html')
 
     return app
