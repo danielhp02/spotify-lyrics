@@ -3,10 +3,14 @@
     <head>
         <link rel='icon' type='image/jpg' href={{album_art_thumbnail}}>
         <link rel='stylesheet' type='text/css' href="{{ url_for('static',filename='styles/styles.css') }}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="{{ url_for('static',filename='js/test.js') }}"></script>
         <title>Now playing: {{song_name}}</title>
     </head>
     <body>
-        <p style='float:inline-start'>{{lyrics|safe}}</p>
+        <div id='lyrics'>
+            <p style='float:inline-start'>{{lyrics|safe}}</p>  
+        </div>
         <div id='top'>
             <table style='text-align: left;float:inline-end'>
                 <tr>
@@ -23,6 +27,10 @@
                     <td>
                         <img src={{album_art}} />
                     </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><button>Click me!</button></td>
                 </tr>
             </table>
         </div>
