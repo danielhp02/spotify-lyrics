@@ -2,7 +2,6 @@ import os
 import spotipy
 import spotipy.util as util
 import lyricsgenius
-from multiprocessing import Process, Value
 from flask import Flask, render_template
 
 
@@ -38,11 +37,10 @@ def create_app(test_config=None):
     from . import lyrics
     objects = lyrics.init(spotipy, util, lyricsgenius)
 
-    # p = Process(target=lyrics.output_lyrics_loop, args=(objects["spotipy"], objects["genius"],))
-    # p.start()
-    # app.run(debug=True, use_reloader=False)
-    # p.join()
-    # lyrics.output_lyrics_loop(objects["spotipy"], objects["genius"])
+    @app.route('/_get_music_data')
+    def get_music_data():
+
+
     @app.route('/')
     def root():
         lyrics.get_song_data(objects["spotipy"], objects["genius"])

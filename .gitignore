@@ -6,3 +6,4 @@ hello.py
 __pycache__/
 *.pyc
 instance/
+research/
