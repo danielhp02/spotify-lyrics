@@ -4,12 +4,6 @@ import spotipy.util as util
 import lyricsgenius
 from multiprocessing import Process, Value
 from flask import Flask, render_template
-import time
-import schedule
-
-
-
-
 
 def create_app(test_config=None):
     # create and configure the app
