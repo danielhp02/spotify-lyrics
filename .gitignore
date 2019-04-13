@@ -1,0 +1,9 @@
+.cache-*
+tokens.json
+song.py
+old_code/
+hello.py
+__pycache__/
+*.pyc
+instance/
+research/

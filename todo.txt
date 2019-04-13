@@ -1,0 +1,2 @@
+setup oauth
+host on raspberry pi
