@@ -2,7 +2,7 @@ import os
 import spotipy
 import spotipy.util as util
 import lyricsgenius
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 
 
 def create_app(test_config=None):
@@ -39,12 +39,12 @@ def create_app(test_config=None):
 
     @app.route('/_get_music_data')
     def get_music_data():
-
+        lyrics.get_song_data(objects["spotipy"], objects["genius"])
+        song_details = lyrics.print_track()
+        return jsonify(songname = song_details[0], lyrics = song_details[1])
 
     @app.route('/')
     def root():
-        lyrics.get_song_data(objects["spotipy"], objects["genius"])
-        song_details = lyrics.print_track()
-        return render_template('base.html', song_text=song_details[0], lyrics=song_details[1])
+        return render_template('base.html')
 
     return app

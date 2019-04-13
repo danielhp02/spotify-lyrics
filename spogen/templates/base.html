@@ -2,9 +2,34 @@
 <html>
     <head>
         <title>test</title>
+
+        <script type=text/javascript>
+            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        </script>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
     </head>
     <body>
+        <!--
         <p>{{song_text}}</p>
         <p>{{lyrics|safe}}</p>
+        -->
+        <div id="songname"></div>
+        <div id="lyrics"></div>
+
+        <script>
+            (function(){
+                $.getJSON(
+                    $SCRIPT_ROOT+"/_get_music_data", // Your AJAX route here
+                    function(data) {
+                    $("#songname").text(data.songname)
+                    //$("#artist").text(data.artist+" %")
+                    $("#lyrics").html(data.lyrics)
+                }
+                );
+                setTimeout(arguments.callee, 10000);
+            })();
+        </script>
     </body>
 </html>

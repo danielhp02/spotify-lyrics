@@ -77,24 +77,21 @@ def get_song_data(sp, genius):
     else:
         print("Song is already in database.")
         current_song_id = db.query_db("SELECT * FROM song WHERE name = ?", (song_data['name'],))[0]["id"]
-        print("current_song_id:", current_song_id)
+        print("song_data['name']:", song_data['name'], "\ncurrent_song_id:", current_song_id)
 
 def print_track():
     current_song = db.query_db("SELECT * FROM song WHERE id = (SELECT MAX(id) FROM song)")[0]
     artists = db.query_db("SELECT * FROM artists WHERE songname = ?", (current_song["name"],))
 
-    # print("type(current_song):", type(current_song))
-    # print("artists:", artists[0][0])
-
     output = []
 
     # Process song name and artists
     if len(artists) == 1: # number of artists
-        print("This song has one artist.")
+        print("This song has one artist:", artists[0]['artist'])
         current_song_string = " ".join([current_song['name'], 'by', str(artists[0][0]), 'is now playing.'])
         output.append(current_song_string)
     else:
-        print("This song has multiple artists.")
+        print("This song has multiple artists:", artists)
         artist_string = [artists[0][0]]
         for index in range(1, len(artists)):
             artist = artists[index][0]
