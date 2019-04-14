@@ -52,10 +52,7 @@ def get_playing_status(sp):
     # Check if user is currently playing a song
     current_playback = sp.current_playback()
     if current_playback != None:
-        if current_playback['currently_playing_type'] == 'track':
-            return True
-        else:
-            return False
+        return True if current_playback['currently_playing_type'] == 'track' else False
     else: 
         return False
 
