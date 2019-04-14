@@ -1,4 +1,5 @@
 import os
+import sys
 import spotipy
 import spotipy.util as util
 import lyricsgenius
@@ -20,11 +21,17 @@ def create_app(test_config=None):
         # load the test config if passed in
         app.config.from_mapping(test_config)
 
+    
     # ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
+    # ensure tokens.json exists
+    if not os.path.isfile('./tokens.json'):
+        # doesn't actually halt execution, just catches ugly error and packages it nicely
+        sys.exit('ERROR: tokens.json not found!')
 
     from . import db
     db.init_app(app)
