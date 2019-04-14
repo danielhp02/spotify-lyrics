@@ -10,7 +10,6 @@ import click
 from flask import current_app, g, render_template
 from flask.cli import with_appcontext
 
-
 # spotify data
 def init(spotipy, util, lyricsgenius):
     scope = 'user-read-playback-state'
