@@ -39,8 +39,8 @@ def create_app(test_config=None):
 
     @app.route('/_get_music_data')
     def get_music_data():
-        lyrics.get_song_data(objects["spotipy"], objects["genius"])
-        song_details = lyrics.print_track()
+        current_song_id = lyrics.get_song_data(objects["spotipy"], objects["genius"])
+        song_details = lyrics.print_track(current_song_id)
         return jsonify(songname = song_details[0], lyrics = song_details[1])
 
     @app.route('/')
