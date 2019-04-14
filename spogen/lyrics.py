@@ -6,13 +6,10 @@ import simplejson
 import spotipy
 from multiprocessing import Process, Value
 from . import db
-
 import click
 from flask import current_app, g, render_template
 from flask.cli import with_appcontext
 
-song_data = {}
-current_song_id = 0
 
 # spotify data
 def init(spotipy, util, lyricsgenius):
