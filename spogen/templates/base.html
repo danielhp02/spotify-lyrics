@@ -1,32 +1,35 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel='icon' type='image/jpg' href={{album_art_thumbnail}}>
-        <link rel='stylesheet' type='text/css' href="{{ url_for('static',filename='styles/styles.css') }}">
-        <title>Now playing: {{song_name}}</title>
-    </head>
-    <body>
-        <div id='lyrics'>
-            <p style='float:inline-start'>{{lyrics|safe}}</p>  
-        </div>
-        <div id='top'>
-            <table style='text-align: left;float:inline-end'>
-                <tr>
-                    <th>
-                        Track: <br>
-                        Album: <br>
-                        Artist:
-                    </th>
-                    <td>
-                        <a href='https://open.spotify.com/track/{{songid}}'>{{song_name}}</a> <br>
-                        <a href='https://open.spotify.com/album/{{albumid}}'>{{song_album}}</a> <br>
-                        {{song_artist|safe}}
-                    </td>
-                    <td>
-                        <img src={{album_art}} />
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </body>
+
+<head>
+    <link rel='icon' type='image/jpg' href={{album_art_thumbnail}}>
+    <link rel='stylesheet' type='text/css' href="{{ url_for('static',filename='styles/styles.css') }}">
+    <title>Now playing: {{song_name}}</title>
+</head>
+
+<body>
+    <div id='lyrics'>
+        <p style='float:inline-start'>{{lyrics|safe}}</p>
+    </div>
+    <div id='top'>
+        <table style='text-align: left;float:inline-end'>
+            <tr>
+                <th>
+                    Track: <br>
+                    Album: <br>
+                    Artist:
+                </th>
+                <td>
+                    <a href='https://open.spotify.com/track/{{songid}}'>{{song_name}}</a> <br>
+                    <a href='https://open.spotify.com/album/{{albumid}}'>{{song_album}}</a> <br>
+                    {{song_artist|safe}}
+                </td>
+                <td>
+                    <img src={{album_art}} />
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
 </html>
