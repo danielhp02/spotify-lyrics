@@ -3,7 +3,6 @@ import sys
 import spotipy
 import spotipy.util as util
 import lyricsgenius
-from multiprocessing import Process, Value
 from flask import Flask, render_template, jsonify
 
 def create_app(test_config=None):
