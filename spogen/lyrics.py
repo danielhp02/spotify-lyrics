@@ -10,6 +10,8 @@ import click
 from flask import current_app, g, render_template
 from flask.cli import with_appcontext
 
+adding_to_db = False
+
 # spotify data
 def init(spotipy, util, lyricsgenius):
     scope = 'user-read-playback-state'
@@ -57,6 +59,8 @@ def get_playing_status(sp):
         return False
 
 def get_song_data(sp, genius):
+    global adding_to_db
+
     current_playback = sp.current_playback()['item']
     song_data = {
         'songname': current_playback['name'],
@@ -70,8 +74,12 @@ def get_song_data(sp, genius):
         'videolink': '0'
     }
     if db.query_db('SELECT SONGID FROM SONG WHERE SONGID = ?', (song_data['songid'],)) == []:
-        print('Song: %s not found in database. Adding...' % song_data['songname'])
-        db.query_db('INSERT INTO SONG (SONGID, SONGNAME, LYRICS) VALUES (?, ?, ?)', (song_data['songid'], song_data['songname'], get_lyrics(genius, song_data)))
+        if adding_to_db != True:
+            print('Song: %s not found in database. Adding...' % song_data['songname'])
+            adding_to_db = True
+            db.query_db('INSERT INTO SONG (SONGID, SONGNAME, LYRICS) VALUES (?, ?, ?)', (song_data['songid'], song_data['songname'], get_lyrics(genius, song_data)))
+        else:
+            return None
     else:
         print('Song: %s found in database.' % song_data['songname'])
     
@@ -84,4 +92,5 @@ def get_song_data(sp, genius):
         out += ', '
     song_data['artistlinks'] = out[0:-2]
 
+    adding_to_db = False
     return song_data
