@@ -1,0 +1,12 @@
+* {
+    font-size: 15px;
+    font-family: 'Trebuchet MS', Helvetica, sans-serif;
+    text-decoration: none;
+    color: black;
+}
+
+#top {
+    width: 100%;
+    top: 0px;
+    position: fixed;
+}

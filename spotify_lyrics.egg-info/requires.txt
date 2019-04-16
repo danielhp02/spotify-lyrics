@@ -1,0 +1,5 @@
+flask
+lyricsgenius
+schedule
+simplejson
+spotipy
