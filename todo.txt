@@ -1,5 +1,5 @@
 setup oauth
 host on raspberry pi
-autorefresh page on song change
 add music video support; youtube?
 add support to manually change song names
+fix bug where spotify doesnt get checked when nothing is playing (copy some code from base.html to noneplaying.html)
