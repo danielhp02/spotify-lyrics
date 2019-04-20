@@ -13,10 +13,10 @@
 </head>
 
 <body>
-    <div id='songname'></div>
-    <div id='lyrics'></div>
-    <!-- <div id='top'>
-        <table style='text-align: left;float:inline-end'>
+    <!-- <div id='songname'></div> -->
+
+    <div id='top'>
+        <table style="text-align: left;float: right">
             <tr>
                 <th>
                     Track: <br>
@@ -24,24 +24,29 @@
                     Artist:
                 </th>
                 <td>
-                    <a href='https://open.spotify.com/track/{{songid}}'>{{song_name}}</a> <br>
-                    <a href='https://open.spotify.com/album/{{albumid}}'>{{song_album}}</a> <br>
-                    {{song_artist|safe}}
+                    <div id='song'></div>
+                    <div id='album'></div>
+                    <div id='artist'></div>
                 </td>
                 <td>
-                    <img src={{album_art}} />
+                    <div id='albumart'></div>
                 </td>
             </tr>
         </table>
-    </div> -->
+    </div>
+
+    <div id='lyrics'></div>
+
     <script>
         (function(){
             $.getJSON(
                 $SCRIPT_ROOT+"/_get_music_data",
                 function(data) {
-                $("#songname").text(data.songname)
-                //$("#artist").text(data.artist+" %")
+                $("#song").html(data.songlink)
+                $("#album").html(data.albumlink)
+                $("#artist").html(data.artistlinks)
                 $("#lyrics").html(data.lyrics)
+                $("#albumart").html(data.albumartimage)
             }
             );
             setTimeout(arguments.callee, 2000);

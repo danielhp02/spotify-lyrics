@@ -70,7 +70,7 @@ def get_song_data(sp, genius):
             'albumartistid': current_playback['artists'][0]['id'],
             'artist': get_artists(current_playback['artists'], 'name'),
             'artistid': get_artists(current_playback['artists'], 'id'),
-            'albumart': get_art(current_playback),
+            'albumart': get_art(current_playback), # list: [large, medium, small]
             'videolink': '0'
         }
         if db.query_db('SELECT SONGID FROM SONG WHERE SONGID = ?', (song_data['songid'],)) == []:
@@ -85,6 +85,12 @@ def get_song_data(sp, genius):
 
         db.get_db().commit()
         song_data['lyrics'] = db.query_db('SELECT LYRICS FROM SONG WHERE SONGID = ?', (song_data['songid'],))[0]['lyrics'].replace('\n', '<br>')
+
+        song_data['songlink'] = '<a href=\'https://open.spotify.com/track/{0}\'>{1}</a>'.format(song_data['songid'], song_data['songname'])
+
+        song_data['albumlink'] = '<a href=\'https://open.spotify.com/album/{0}\'>{1}</a>'.format(song_data['albumid'], song_data['album'])
+        print(song_data['albumart'])
+        song_data['albumartimage'] = '<img src={0} />'.format(song_data['albumart'][1])
 
         out = ''
         for s, t in zip(song_data['artistid'], song_data['artist']):

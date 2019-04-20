@@ -46,7 +46,7 @@ def create_app(test_config=None):
 
         if song_details != None and song_details != "nothing playing":
             print("there is a song")
-            return jsonify(songname = song_details['songname'], lyrics = song_details['lyrics'])
+            return jsonify(song_details)
         elif song_details == "nothing playing":
             return jsonify(songname = '', lyrics = '')
         else:
