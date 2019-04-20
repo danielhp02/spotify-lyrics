@@ -89,7 +89,7 @@ def get_song_data(sp, genius):
         song_data['songlink'] = '<a href=\'https://open.spotify.com/track/{0}\'>{1}</a>'.format(song_data['songid'], song_data['songname'])
 
         song_data['albumlink'] = '<a href=\'https://open.spotify.com/album/{0}\'>{1}</a>'.format(song_data['albumid'], song_data['album'])
-        print(song_data['albumart'])
+        
         song_data['albumartimage'] = '<img src={0} />'.format(song_data['albumart'][1])
 
         out = ''
