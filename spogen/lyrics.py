@@ -4,7 +4,6 @@ import urllib.parse
 import re
 import simplejson
 import spotipy
-from multiprocessing import Process, Value
 from . import db
 import click
 from flask import current_app, g, render_template
