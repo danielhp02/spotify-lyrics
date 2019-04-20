@@ -34,7 +34,16 @@ def create_app(test_config=None):
 
     @app.route('/_get_music_data')
     def get_music_data():
-        song_details = lyrics.get_song_data(objects["spotipy"], objects["genius"])
+        nonlocal objects # use objects from the parent function
+
+        try:
+            song_details = lyrics.get_song_data(objects["spotipy"], objects["genius"])
+        except spotipy.client.SpotifyException:
+            print("Token expired. Refreshing...")
+            objects = lyrics.init(spotipy, util, lyricsgenius)
+            print("Token refreshed.")
+            song_details = lyrics.get_song_data(objects["spotipy"], objects["genius"])
+
         if song_details != None and song_details != "nothing playing":
             print("there is a song")
             return jsonify(songname = song_details['songname'], lyrics = song_details['lyrics'])
