@@ -23,6 +23,7 @@ def init(spotipy, util, lyricsgenius):
     # Authenticate Spotify and Genius
     token = util.prompt_for_user_token(username, scope, tokens["spotify"]['client_id'], tokens["spotify"]['client_secret'], tokens["spotify"]['redirect_uri'])
     genius = lyricsgenius.Genius(tokens["genius"]["token"])
+    genius.skip_non_songs = True
 
     sp = spotipy.Spotify(auth=token)
     return {"spotipy":  sp,
