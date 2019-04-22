@@ -42,3 +42,7 @@ At the moment, tokens must be manually added. Support for oAuth 2.0 is planned t
 ## Running the program
 
 To run, use `. ./init.sh`. If everything is set up correctly, it **should** work.
+
+## Known bugs
+
+* Beetlebum by Blur cannot be found even with name formatting, despite being on Genius.
