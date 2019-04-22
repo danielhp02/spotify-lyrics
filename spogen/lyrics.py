@@ -59,13 +59,26 @@ def get_playing_status(sp):
 
 def format_song_name(song_name):
     print("song_name:", song_name)
+
+    # First try to format songnames ending in " - [year] Remaster" and similar variants
     matchObj = re.match(r'(.*) - \d\d\d\d remaster', song_name, re.I)
     if matchObj:
-        print("yes")
+        print("Name formatted: songname ends in \" - [year] Remaster...\"")
         return matchObj.group(1)
-    else:
-        print("no")
-        return song_name
+
+    # Then try songnames without a year or the year at the end
+    matchObj = re.match(r'(.*) - remaster', song_name, re.I)
+    if matchObj:
+        print("Name formatted: songname ends in \" - Remaster...\"")
+        return matchObj.group(1)
+
+    matchObj = re.match(r'(.*) - .* remix', song_name, re.I)
+    if matchObj:
+        print("Name formatted: songname ends in \" - ... Remix\"")
+        return matchObj.group(1)
+
+    # If there are no matches, return the input as is
+    return song_name
 
 def get_song_data(sp, genius):
     global adding_to_db
@@ -73,9 +86,8 @@ def get_song_data(sp, genius):
     try:
         current_playback = sp.current_playback()['item']
 
-        print("format_song_name:", format_song_name(str(current_playback['name'])))
-
         song_data = {
+            'rawsongname': current_playback['name'],
             'songname': format_song_name(str(current_playback['name'])),
             'songid': current_playback['id'],
             'album': current_playback['album']['name'],
@@ -86,6 +98,9 @@ def get_song_data(sp, genius):
             'albumart': get_art(current_playback), # list: [large, medium, small]
             'videolink': '0'
         }
+
+        print("song name:", song_data['songname'])
+
         if db.query_db('SELECT SONGID FROM SONG WHERE SONGID = ?', (song_data['songid'],)) == []:
             if adding_to_db != True:
                 print('Song: %s not found in database. Adding...' % song_data['songname'])
@@ -99,7 +114,7 @@ def get_song_data(sp, genius):
         db.get_db().commit()
         song_data['lyrics'] = db.query_db('SELECT LYRICS FROM SONG WHERE SONGID = ?', (song_data['songid'],))[0]['lyrics'].replace('\n', '<br>')
 
-        song_data['songlink'] = '<a href=\'https://open.spotify.com/track/{0}\'>{1}</a>'.format(song_data['songid'], song_data['songname'])
+        song_data['songlink'] = '<a href=\'https://open.spotify.com/track/{0}\'>{1}</a>'.format(song_data['songid'], song_data['rawsongname'])
 
         song_data['albumlink'] = '<a href=\'https://open.spotify.com/album/{0}\'>{1}</a>'.format(song_data['albumid'], song_data['album'])
 
