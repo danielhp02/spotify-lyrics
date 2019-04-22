@@ -45,7 +45,6 @@ def create_app(test_config=None):
             song_details = lyrics.get_song_data(objects["spotipy"], objects["genius"])
 
         if song_details != None and song_details != "nothing playing":
-            print("there is a song")
             return jsonify(song_details)
         elif song_details == "nothing playing":
             return jsonify(songname = '', lyrics = '')

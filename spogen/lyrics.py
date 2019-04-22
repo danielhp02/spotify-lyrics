@@ -59,8 +59,6 @@ def get_playing_status(sp):
         return False
 
 def format_song_name(song_name):
-    print("song_name:", song_name)
-
     # First try to format songnames ending in " - [year] Remaster" and similar variants
     matchObj = re.match(r'(.*) - \d\d\d\d remaster', song_name, re.I)
     if matchObj:
@@ -106,8 +104,6 @@ def get_song_data(sp, genius):
             'albumart': get_art(current_playback), # list: [large, medium, small]
             'videolink': '0'
         }
-
-        print("song name:", song_data['songname'])
 
         if db.query_db('SELECT SONGID FROM SONG WHERE SONGID = ?', (song_data['songid'],)) == []:
             if adding_to_db != True:
