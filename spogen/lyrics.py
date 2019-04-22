@@ -14,7 +14,7 @@ adding_to_db = False
 # spotify data
 def init(spotipy, util, lyricsgenius):
     scope = 'user-read-playback-state'
-    username = "shawarmawolf" # <-- Change to your Spotify username
+    username = "dandalf21" # <-- Change to your Spotify username
 
     # Load tokens
     with open('./tokens.json', 'r') as json_file:
@@ -57,13 +57,26 @@ def get_playing_status(sp):
     else:
         return False
 
+def format_song_name(song_name):
+    print("song_name:", song_name)
+    matchObj = re.match(r'(.*) - \d\d\d\d remaster', song_name, re.I)
+    if matchObj:
+        print("yes")
+        return matchObj.group(1)
+    else:
+        print("no")
+        return song_name
+
 def get_song_data(sp, genius):
     global adding_to_db
 
     try:
         current_playback = sp.current_playback()['item']
+
+        print("format_song_name:", format_song_name(str(current_playback['name'])))
+
         song_data = {
-            'songname': current_playback['name'],
+            'songname': format_song_name(str(current_playback['name'])),
             'songid': current_playback['id'],
             'album': current_playback['album']['name'],
             'albumid': current_playback['album']['id'],
@@ -89,7 +102,7 @@ def get_song_data(sp, genius):
         song_data['songlink'] = '<a href=\'https://open.spotify.com/track/{0}\'>{1}</a>'.format(song_data['songid'], song_data['songname'])
 
         song_data['albumlink'] = '<a href=\'https://open.spotify.com/album/{0}\'>{1}</a>'.format(song_data['albumid'], song_data['album'])
-        
+
         song_data['albumartimage'] = '<img src={0} />'.format(song_data['albumart'][1])
 
         out = ''
