@@ -14,7 +14,7 @@ adding_to_db = False
 # spotify data
 def init(spotipy, util, lyricsgenius):
     scope = 'user-read-playback-state'
-    username = "shawarmawolf" # <-- Change to your Spotify username
+    username = "dandalf21" # <-- Change to your Spotify username
 
     # Load tokens
     with open('./tokens.json', 'r') as json_file:
@@ -23,6 +23,7 @@ def init(spotipy, util, lyricsgenius):
     # Authenticate Spotify and Genius
     token = util.prompt_for_user_token(username, scope, tokens["spotify"]['client_id'], tokens["spotify"]['client_secret'], tokens["spotify"]['redirect_uri'])
     genius = lyricsgenius.Genius(tokens["genius"]["token"])
+    genius.skip_non_songs = True
 
     sp = spotipy.Spotify(auth=token)
     return {"spotipy":  sp,
@@ -57,13 +58,45 @@ def get_playing_status(sp):
     else:
         return False
 
+def format_song_name(song_name):
+    print("song_name:", song_name)
+
+    # First try to format songnames ending in " - [year] Remaster" and similar variants
+    matchObj = re.match(r'(.*) - \d\d\d\d remaster', song_name, re.I)
+    if matchObj:
+        print("Name formatted: songname ends in \" - [year] Remaster...\"")
+        return matchObj.group(1)
+
+    # Then try songnames without a year or the year at the end
+    matchObj = re.match(r'(.*) - remaster', song_name, re.I)
+    if matchObj:
+        print("Name formatted: songname ends in \" - Remaster...\"")
+        return matchObj.group(1)
+
+    # Try songnames of singles
+    matchObj = re.match(r'(.*) - single', song_name, re.I)
+    if matchObj:
+        print("Name formatted: songname ends in \" - ... Single\"")
+        return matchObj.group(1)
+
+    # Try songs with featured artists. NOTE: not always beneficial, thus commented out
+    # matchObj = re.match(r'(.*) \(feat.*\)', song_name, re.I)
+    # if matchObj:
+    #     print("Name formatted: songname ends in \"(feat...)\"")
+    #     return matchObj.group(1)
+
+    # If there are no matches, return the input as is
+    return song_name
+
 def get_song_data(sp, genius):
     global adding_to_db
 
     try:
         current_playback = sp.current_playback()['item']
+
         song_data = {
-            'songname': current_playback['name'],
+            'rawsongname': current_playback['name'],
+            'songname': format_song_name(str(current_playback['name'])),
             'songid': current_playback['id'],
             'album': current_playback['album']['name'],
             'albumid': current_playback['album']['id'],
@@ -73,6 +106,9 @@ def get_song_data(sp, genius):
             'albumart': get_art(current_playback), # list: [large, medium, small]
             'videolink': '0'
         }
+
+        print("song name:", song_data['songname'])
+
         if db.query_db('SELECT SONGID FROM SONG WHERE SONGID = ?', (song_data['songid'],)) == []:
             if adding_to_db != True:
                 print('Song: %s not found in database. Adding...' % song_data['songname'])
@@ -86,10 +122,10 @@ def get_song_data(sp, genius):
         db.get_db().commit()
         song_data['lyrics'] = db.query_db('SELECT LYRICS FROM SONG WHERE SONGID = ?', (song_data['songid'],))[0]['lyrics'].replace('\n', '<br>')
 
-        song_data['songlink'] = '<a href=\'https://open.spotify.com/track/{0}\'>{1}</a>'.format(song_data['songid'], song_data['songname'])
+        song_data['songlink'] = '<a href=\'https://open.spotify.com/track/{0}\'>{1}</a>'.format(song_data['songid'], song_data['rawsongname'])
 
         song_data['albumlink'] = '<a href=\'https://open.spotify.com/album/{0}\'>{1}</a>'.format(song_data['albumid'], song_data['album'])
-        
+
         song_data['albumartimage'] = '<img src={0} />'.format(song_data['albumart'][1])
 
         out = ''
