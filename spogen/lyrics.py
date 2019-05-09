@@ -77,7 +77,7 @@ def format_song_name(song_name):
         print("Name formatted: songname ends in \" - ... Single\"")
         return matchObj.group(1)
 
-    # Try songs with featured artists. NOTE: not always beneficial, thus commented out
+    # Try songs with featured (ie, additional) artists. NOTE: not always beneficial, thus commented out
     # matchObj = re.match(r'(.*) \(feat.*\)', song_name, re.I)
     # if matchObj:
     #     print("Name formatted: songname ends in \"(feat...)\"")
