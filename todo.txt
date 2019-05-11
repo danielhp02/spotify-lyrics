@@ -1,5 +1,6 @@
-setup oauth
 host on raspberry pi
 add music video support; youtube?
-add support to manually change song names
+mark lyrics as accurate
+    - store in db (or somewhere persistant)
+    - display how many people/times they were marked as accurate
 fix bug where spotify doesnt get checked when nothing is playing (copy some code from base.html to noneplaying.html)
