@@ -43,6 +43,8 @@ At the moment, tokens must be manually added. Support for oAuth 2.0 is planned t
 
 To run, use `. ./init.sh`. If everything is set up correctly, it **should** work.
 
+If the lyrics are inaccurate or completely wrong, you can manually set them by clicking the "No" button under the album art. This will create a textbox in which you can enter lyrics. Newlines will automatically be converted into HTML friendly `<br>` tags. The changes made are saved to the database. 
+
 ## Known bugs
 
 * Beetlebum by Blur cannot be found even with name formatting, despite being on Genius.
