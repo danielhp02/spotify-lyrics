@@ -135,3 +135,9 @@ def get_song_data(sp, genius):
     except TypeError:
         print("No song is currently playing.")
         return "nothing playing" # eh should work
+
+def set_lyrics(songid, songname, lyrics):
+    db.query_db('UPDATE SONG SET LYRICS = ? WHERE SONGID = ? AND SONGNAME = ?', (lyrics, str(songid), str(songname)))
+    db.get_db().commit()
+    print(songid)
+    print(db.query_db('SELECT LYRICS FROM SONG WHERE SONGID = ?', (songid,) ))

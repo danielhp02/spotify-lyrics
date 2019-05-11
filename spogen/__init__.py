@@ -3,7 +3,7 @@ import sys
 import spotipy
 import spotipy.util as util
 import lyricsgenius
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 
 def create_app(test_config=None):
     # create and configure the app
@@ -59,5 +59,22 @@ def create_app(test_config=None):
         else:
             print("nothing playing")
             return render_template('noneplaying.html')
+
+    @app.route('/_get_lyrics', methods=['POST'])
+    def lyrics_post():
+        nonlocal objects # use objects from the parent function
+        newLyrics = request.form['lyrics'].replace('\n', '<br>')
+
+        try:
+            song_details = lyrics.get_song_data(objects["spotipy"], objects["genius"])
+        except spotipy.client.SpotifyException:
+            print("Token expired. Refreshing...")
+            objects = lyrics.init(spotipy, util, lyricsgenius)
+            print("Token refreshed.")
+            song_details = lyrics.get_song_data(objects["spotipy"], objects["genius"])
+
+        lyrics.set_lyrics(song_details['songid'], song_details['songname'], newLyrics)
+        print("new lyrics:", newLyrics)
+        return redirect(url_for('root'))
 
     return app
