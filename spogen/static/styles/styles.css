@@ -19,10 +19,64 @@ a:hover {
 
 a:active {
   background-color: hotpink;
-} 
+}
 
 #top {
     width: 100%;
     top: 0px;
     position: fixed;
 }
+
+a.buttonYes{
+    display:inline-block;
+    padding:0.25em 0.35em;
+    border:0.1em solid #000000;
+    background-color: lawngreen;
+    margin:0 0.3em 0.3em 0;
+    border-radius:0.12em;
+    box-sizing: border-box;
+    text-decoration:none;
+    font-family:'Roboto',sans-serif;
+    font-weight:300;
+    color:#000000;
+    text-align:center;
+    transition: all 0.2s;
+}
+
+a.buttonYes:hover{
+    color:#FFFFFF;
+    background-color: green;
+}
+
+a.buttonNo{
+    display:inline-block;
+    padding:0.25em 0.35em;
+    border:0.1em solid #000000;
+    background-color: indianred;
+    margin:0 0.3em 0.3em 0;
+    border-radius:0.12em;
+    box-sizing: border-box;
+    text-decoration:none;
+    font-family:'Roboto',sans-serif;
+    font-weight:300;
+    color:#000000;
+    text-align:center;
+    transition: all 0.2s;
+}
+a.buttonNo:hover{
+    color:#FFFFFF;
+    background-color: red;
+}
+
+@media all and (max-width:30em){
+    a.buttonYes{
+        display:block;
+        margin:0.4em auto;
+    }
+
+    a.buttonNo{
+        display:block;
+        margin:0.4em auto;
+    }
+}
+/* https://fdossena.com/?p=html5cool/buttons/i.frag <-- button source */

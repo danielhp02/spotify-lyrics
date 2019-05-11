@@ -77,7 +77,7 @@ def format_song_name(song_name):
         print("Name formatted: songname ends in \" - ... Single\"")
         return matchObj.group(1)
 
-    # Try songs with featured artists. NOTE: not always beneficial, thus commented out
+    # Try songs with featured (ie, additional) artists. NOTE: not always beneficial, thus commented out
     # matchObj = re.match(r'(.*) \(feat.*\)', song_name, re.I)
     # if matchObj:
     #     print("Name formatted: songname ends in \"(feat...)\"")
@@ -135,3 +135,9 @@ def get_song_data(sp, genius):
     except TypeError:
         print("No song is currently playing.")
         return "nothing playing" # eh should work
+
+def set_lyrics(songid, songname, lyrics):
+    db.query_db('UPDATE SONG SET LYRICS = ? WHERE SONGID = ? AND SONGNAME = ?', (lyrics, str(songid), str(songname)))
+    db.get_db().commit()
+    print(songid)
+    print(db.query_db('SELECT LYRICS FROM SONG WHERE SONGID = ?', (songid,) ))

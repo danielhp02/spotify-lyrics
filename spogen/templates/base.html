@@ -30,12 +30,29 @@
                     <div id='albumart'></div>
                 </td>
             </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    <span id='feedback'></span>
+                    <a class='buttonYes' id='feedbackButtonYes' href="javascript:confirmLyrics(true)">Yes</a>
+                    <a class='buttonNo' id='feedbackButtonNo' href="javascript:confirmLyrics(false)">No</a>
+
+                    <form id="lyricForm" action="{{url_for('lyrics_post')}}" method="POST">
+                        <textarea name="lyrics" placeholder="Please paste lyrics here."></textarea>
+                        <input type="submit">
+                    </form>
+                </td>
+            </tr>
         </table>
     </div>
 
     <div id='lyrics'></div>
 
     <script>
+        var currentSong;
+        var previousSong;
+
         (function(){
             $.getJSON(
                 $SCRIPT_ROOT+"/_get_music_data",
@@ -45,10 +62,59 @@
                 $("#artist").html(data.artistlinks)
                 $("#lyrics").html(data.lyrics)
                 $("#albumart").html(data.albumartimage)
+                currentSong = data.songlink;
+
+                if (currentSong != previousSong) {
+                    feedbackText(false, null);
+                    previousSong = currentSong;
+                }
             }
             );
             setTimeout(arguments.callee, 2000);
         })();
+
+        function feedbackText(feedbackGiven, areCorrect) {
+            if (feedbackGiven) {
+                // Hide the buttons
+                document.getElementById('feedbackButtonYes').style.display = "none";
+                document.getElementById('feedbackButtonNo').style.display = "none";
+
+
+
+                // stop feedback text moving
+                // document.getElementById("feedback").style.paddingTop = "100.35em";
+
+                // Change feedback text
+                if (areCorrect) {
+                    $('#feedback').text("Thanks for your feedback!");
+                } else {
+                    $('#feedback').html("Thanks for your feedback! Please input the<br>correct lyrics into the box below.<br>");
+
+                    // Show lyrics input box
+                    document.getElementById('lyricForm').style.display = "initial";
+                }
+            } else {
+                // Show the buttons
+                document.getElementById('feedbackButtonYes').style.display = "inline-block";
+                document.getElementById('feedbackButtonNo').style.display = "inline-block";
+
+                // Hide lyrics input
+                document.getElementById('lyricForm').style.display = "none";
+
+                $('#feedback').text("Are these lyrics correct?");
+            }
+        }
+
+        function confirmLyrics(areCorrect) {
+            if (areCorrect) {
+                console.log("The lyrics are correct.");
+            } else {
+                console.log("The lyrics are incorrect.");
+            }
+
+            // Update feedback text
+            feedbackText(true, areCorrect);
+        }
     </script>
 </body>
 
