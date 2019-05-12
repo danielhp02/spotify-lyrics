@@ -108,6 +108,7 @@ def get_song_data(sp, genius):
             'videolink': '0'
         }
 
+        # Get lyrics from genius or the database
         if db.query_db('SELECT SONGID FROM SONG WHERE SONGID = ?', (song_data['songid'],)) == []:
             if adding_to_db != True:
                 print('Song: %s not found in database. Adding...' % song_data['songname'])
@@ -118,15 +119,22 @@ def get_song_data(sp, genius):
         else:
             print('Song: %s found in database.' % song_data['songname'])
 
+        # Save the database
         db.get_db().commit()
+
+        # Save the lyrics in the dictionary with <br> newline characters
         song_data['lyrics'] = db.query_db('SELECT LYRICS FROM SONG WHERE SONGID = ?', (song_data['songid'],))[0]['lyrics'].replace('\n', '<br>')
 
+        # Convert the song name into a link
         song_data['songlink'] = '<a href=\'https://open.spotify.com/track/{0}\'>{1}</a>'.format(song_data['songid'], song_data['rawsongname'])
 
+        # Convert album name to a link
         song_data['albumlink'] = '<a href=\'https://open.spotify.com/album/{0}\'>{1}</a>'.format(song_data['albumid'], song_data['album'])
 
+        # Generate an img tag for the album art
         song_data['albumartimage'] = '<img src={0} />'.format(song_data['albumart'][1])
 
+        # Convert the artists into links
         out = ''
         for s, t in zip(song_data['artistid'], song_data['artist']):
             out += ('<a href=\'https://open.spotify.com/artist/{0}\'>{1}</a>'.format(s, t))
