@@ -67,6 +67,7 @@
                 // If the current song is not the database, hide unnecessary features
                 if (data.songname == '' && data.lyrics.startsWith('Adding')) {
                     setVisibility('dataTable', "none");
+                    document.title = "Cool Beans"
                 } else {
                     setVisibility('dataTable', "initial");
                 }
