@@ -49,6 +49,9 @@ def get_lyrics(genius, song_data):
         return genius.search_song(song_data["songname"], artist_name).lyrics
     except AttributeError:
         return "Lyrics not found."
+    except requests.exceptions.ReadTimeout:
+        print("Request timed out.")
+        return "Request timed out."
 
 def get_playing_status(sp):
     # Check if user is currently playing a song
