@@ -74,6 +74,7 @@
                 if (currentSong != previousSong) {
                     feedbackText(false, null);
                     previousSong = currentSong;
+                    document.title = data.songname + " by " + data.artist
                 }
             }
             );
