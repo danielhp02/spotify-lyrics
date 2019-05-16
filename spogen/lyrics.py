@@ -128,13 +128,13 @@ def get_song_data(sp, genius):
         song_data['lyrics'] = db.query_db('SELECT LYRICS FROM SONG WHERE SONGID = ?', (song_data['songid'],))[0]['lyrics'].replace('\n', '<br>')
 
         # Convert the genius URL into a HTML link
-        song_data['lyricsurl'] = '<a id=\'geniussource\' href=\'{0}\'>Lyrics from Genius</a>'.format(db.query_db('SELECT URL FROM SONG WHERE SONGID = ?', (song_data['songid'],))[0][0])
+        song_data['lyricsurl'] = '<a id=\'geniussource\' href=\'{0}\' target=\'_blank\' rel=\'noopener noreferrer\'>Lyrics from Genius</a>'.format(db.query_db('SELECT URL FROM SONG WHERE SONGID = ?', (song_data['songid'],))[0][0])
 
         # Convert the song name into a link
-        song_data['songlink'] = '<a href=\'https://open.spotify.com/track/{0}\'>{1}</a>'.format(song_data['songid'], song_data['rawsongname'])
+        song_data['songlink'] = '<a href=\'https://open.spotify.com/track/{0}\' target=\'_blank\' rel=\'noopener noreferrer\'>{1}</a>'.format(song_data['songid'], song_data['rawsongname'])
 
         # Convert album name to a link
-        song_data['albumlink'] = '<a href=\'https://open.spotify.com/album/{0}\'>{1}</a>'.format(song_data['albumid'], song_data['album'])
+        song_data['albumlink'] = '<a href=\'https://open.spotify.com/album/{0}\' target=\'_blank\' rel=\'noopener noreferrer\'>{1}</a>'.format(song_data['albumid'], song_data['album'])
 
         # Generate an img tag for the album art
         song_data['albumartimage'] = '<img src={0} />'.format(song_data['albumart'][1])
@@ -142,7 +142,7 @@ def get_song_data(sp, genius):
         # Convert the artists into links
         out = ''
         for s, t in zip(song_data['artistid'], song_data['artist']):
-            out += ('<a href=\'https://open.spotify.com/artist/{0}\'>{1}</a>'.format(s, t))
+            out += ('<a href=\'https://open.spotify.com/artist/{0}\' target=\'_blank\' rel=\'noopener noreferrer\'>{1}</a>'.format(s, t))
             out += ', '
         song_data['artistlinks'] = out[0:-2]
 
