@@ -14,14 +14,14 @@
 
 <body>
     <div id='top'>
-        <table style="text-align: left;float: right">
+        <table id="dataTable" style="text-align: left;float: right">
             <tr>
-                <th>
+                <th> <!--  style="vertical-align: top"> -->
                     Track: <br>
                     Album: <br>
                     Artist:
                 </th>
-                <td>
+                <td> <!--  style="vertical-align: top"> -->
                     <div id='song'></div>
                     <div id='album'></div>
                     <div id='artist'></div>
@@ -47,7 +47,8 @@
         </table>
     </div>
 
-    <div id='lyrics'></div>
+    <div id='lyrics'></div><br>
+    <div id='lyricsurl'></div><br>
 
     <script>
         var currentSong;
@@ -61,12 +62,24 @@
                 $("#album").html(data.albumlink)
                 $("#artist").html(data.artistlinks)
                 $("#lyrics").html(data.lyrics)
+                $("#lyricsurl").html(data.lyricsurl)
                 $("#albumart").html(data.albumartimage)
                 currentSong = data.songlink;
+
+                // If the current song is not the database, hide unnecessary features
+                if (data.songname == '' && data.lyrics.startsWith('Adding')) {
+                    setVisibility('dataTable', "none");
+                    setVisibility('geniussource', "none");
+                    document.title = "Cool Beans"
+                } else {
+                    setVisibility('dataTable', "initial");
+                    setVisibility('geniussource', "initial");
+                }
 
                 if (currentSong != previousSong) {
                     feedbackText(false, null);
                     previousSong = currentSong;
+                    document.title = data.songname + " by " + data.artist
                 }
             }
             );
@@ -76,10 +89,8 @@
         function feedbackText(feedbackGiven, areCorrect) {
             if (feedbackGiven) {
                 // Hide the buttons
-                document.getElementById('feedbackButtonYes').style.display = "none";
-                document.getElementById('feedbackButtonNo').style.display = "none";
-
-
+                setVisibility('feedbackButtonYes', 'none');
+                setVisibility('feedbackButtonNo', 'none');
 
                 // stop feedback text moving
                 // document.getElementById("feedback").style.paddingTop = "100.35em";
@@ -91,15 +102,15 @@
                     $('#feedback').html("Thanks for your feedback! Please input the<br>correct lyrics into the box below.<br>");
 
                     // Show lyrics input box
-                    document.getElementById('lyricForm').style.display = "initial";
+                    setVisibility('lyricForm', 'initial');
                 }
             } else {
                 // Show the buttons
-                document.getElementById('feedbackButtonYes').style.display = "inline-block";
-                document.getElementById('feedbackButtonNo').style.display = "inline-block";
+                setVisibility('feedbackButtonYes', "initial");
+                setVisibility('feedbackButtonNo', "initial");
 
                 // Hide lyrics input
-                document.getElementById('lyricForm').style.display = "none";
+                setVisibility('lyricForm', 'none');
 
                 $('#feedback').text("Are these lyrics correct?");
             }
@@ -114,6 +125,10 @@
 
             // Update feedback text
             feedbackText(true, areCorrect);
+        }
+
+        function setVisibility(id, display) {
+            document.getElementById(id).style.display = display;
         }
     </script>
 </body>

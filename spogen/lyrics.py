@@ -46,9 +46,13 @@ def get_art(song):
 def get_lyrics(genius, song_data):
     try:
         artist_name = ', '.join(song_data['artist'])
-        return genius.search_song(song_data["songname"], artist_name).lyrics
+        genius_data = genius.search_song(song_data["songname"], artist_name)
+        return [genius_data.lyrics, genius_data.url]
     except AttributeError:
         return "Lyrics not found."
+    except requests.exceptions.ReadTimeout:
+        print("Request timed out.")
+        return "Request timed out."
 
 def get_playing_status(sp):
     # Check if user is currently playing a song
@@ -105,25 +109,37 @@ def get_song_data(sp, genius):
             'videolink': '0'
         }
 
+        # Get lyrics from genius or the database
         if db.query_db('SELECT SONGID FROM SONG WHERE SONGID = ?', (song_data['songid'],)) == []:
             if adding_to_db != True:
                 print('Song: %s not found in database. Adding...' % song_data['songname'])
                 adding_to_db = True
-                db.query_db('INSERT INTO SONG (SONGID, SONGNAME, LYRICS) VALUES (?, ?, ?)', (song_data['songid'], song_data['songname'], get_lyrics(genius, song_data)))
+                genius_data = get_lyrics(genius, song_data)
+                db.query_db('INSERT INTO SONG (SONGID, SONGNAME, LYRICS, URL) VALUES (?, ?, ?, ?)', (song_data['songid'], song_data['songname'], genius_data[0], genius_data[1]))
             else:
                 return None
         else:
             print('Song: %s found in database.' % song_data['songname'])
 
+        # Save the database
         db.get_db().commit()
+
+        # Save the lyrics in the dictionary with <br> newline characters
         song_data['lyrics'] = db.query_db('SELECT LYRICS FROM SONG WHERE SONGID = ?', (song_data['songid'],))[0]['lyrics'].replace('\n', '<br>')
 
+        # Convert the genius URL into a HTML link
+        song_data['lyricsurl'] = '<a id=\'geniussource\' href=\'{0}\'>Lyrics from Genius</a>'.format(db.query_db('SELECT URL FROM SONG WHERE SONGID = ?', (song_data['songid'],))[0][0])
+
+        # Convert the song name into a link
         song_data['songlink'] = '<a href=\'https://open.spotify.com/track/{0}\'>{1}</a>'.format(song_data['songid'], song_data['rawsongname'])
 
+        # Convert album name to a link
         song_data['albumlink'] = '<a href=\'https://open.spotify.com/album/{0}\'>{1}</a>'.format(song_data['albumid'], song_data['album'])
 
+        # Generate an img tag for the album art
         song_data['albumartimage'] = '<img src={0} />'.format(song_data['albumart'][1])
 
+        # Convert the artists into links
         out = ''
         for s, t in zip(song_data['artistid'], song_data['artist']):
             out += ('<a href=\'https://open.spotify.com/artist/{0}\'>{1}</a>'.format(s, t))
