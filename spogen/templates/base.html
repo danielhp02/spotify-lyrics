@@ -47,7 +47,8 @@
         </table>
     </div>
 
-    <div id='lyrics'></div>
+    <div id='lyrics'></div><br>
+    <div id='lyricsurl'></div><br>
 
     <script>
         var currentSong;
@@ -61,15 +62,18 @@
                 $("#album").html(data.albumlink)
                 $("#artist").html(data.artistlinks)
                 $("#lyrics").html(data.lyrics)
+                $("#lyricsurl").html(data.lyricsurl)
                 $("#albumart").html(data.albumartimage)
                 currentSong = data.songlink;
 
                 // If the current song is not the database, hide unnecessary features
                 if (data.songname == '' && data.lyrics.startsWith('Adding')) {
                     setVisibility('dataTable', "none");
+                    setVisibility('geniussource', "none");
                     document.title = "Cool Beans"
                 } else {
                     setVisibility('dataTable', "initial");
+                    setVisibility('geniussource', "initial");
                 }
 
                 if (currentSong != previousSong) {
