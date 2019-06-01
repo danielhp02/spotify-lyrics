@@ -53,34 +53,15 @@
 
     <script>
         var currentSong;
-        var previousSong;
+        var previousSong = "nothing";
 
         (function(){
             $.getJSON(
                 $SCRIPT_ROOT+"/_get_music_data",
                 function(data) {
-                $("#song").html(data.songlink)
-                $("#album").html(data.albumlink)
-                $("#artist").html(data.artistlinks)
-                $("#lyrics").html(data.lyrics)
-                $("#lyricsurl").html(data.lyricsurl)
-                $("#albumart").html(data.albumartimage)
-                currentSong = data.songlink;
 
-                // If the current song is not the database, hide unnecessary features
-                if (data.songname == '' && data.lyrics.startsWith('Adding')) {
-                    setVisibility('dataTable', "none");
-                    setVisibility('geniussource', "none");
-                    document.title = "Cool Beans"
-                } else {
-                    setVisibility('dataTable', "initial");
-                    setVisibility('geniussource', "initial");
-                }
+                    currentSong = data.songlink;
 
-                if (currentSong != previousSong) {
-                    feedbackText(false, null);
-                    previousSong = currentSong;
-                    document.title = data.songname + " by " + data.artist
                     // If the current song is not the database, hide unnecessary features
                     if (data.songname == '' && data.lyrics.startsWith('Adding')) {
                         setVisibility('dataTable', "none");
@@ -90,8 +71,19 @@
                         setVisibility('dataTable', "initial");
                         setVisibility('lyricsurl', "initial");
                     }
+
+                    if (currentSong != previousSong) {
+                        feedbackText(false, null);
+                        previousSong = currentSong;
+                        $("#song").html(data.songlink)
+                        $("#album").html(data.albumlink)
+                        $("#artist").html(data.artistlinks)
+                        $("#lyrics").html(data.lyrics)
+                        $("#lyricsurl").html(data.lyricsurl)
+                        $("#albumart").html(data.albumartimage)
+                        document.title = data.songname + " by " + data.artist;
+                    }
                 }
-            }
             );
             setTimeout(arguments.callee, 2000);
         })();
