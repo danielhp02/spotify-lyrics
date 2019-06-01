@@ -128,7 +128,7 @@ def get_song_data(sp, genius):
         song_data['lyrics'] = db.query_db('SELECT LYRICS FROM SONG WHERE SONGID = ?', (song_data['songid'],))[0]['lyrics'].replace('\n', '<br>')
 
         # Convert the genius URL into a HTML link
-        song_data['lyricsurl'] = '<a id=\'geniussource\' href=\'{0}\' target=\'_blank\' rel=\'noopener noreferrer\'>Lyrics from Genius</a>'.format(db.query_db('SELECT URL FROM SONG WHERE SONGID = ?', (song_data['songid'],))[0][0])
+        song_data['lyricsurl'] = '<a href=\'{0}\' target=\'_blank\' rel=\'noopener noreferrer\'>Lyrics from Genius</a>'.format(db.query_db('SELECT URL FROM SONG WHERE SONGID = ?', (song_data['songid'],))[0][0])
 
         # Convert the song name into a link
         song_data['songlink'] = '<a href=\'https://open.spotify.com/track/{0}\' target=\'_blank\' rel=\'noopener noreferrer\'>{1}</a>'.format(song_data['songid'], song_data['rawsongname'])

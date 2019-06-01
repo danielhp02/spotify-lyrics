@@ -81,6 +81,15 @@
                     feedbackText(false, null);
                     previousSong = currentSong;
                     document.title = data.songname + " by " + data.artist
+                    // If the current song is not the database, hide unnecessary features
+                    if (data.songname == '' && data.lyrics.startsWith('Adding')) {
+                        setVisibility('dataTable', "none");
+                        setVisibility('lyricsurl', "none");
+                        document.title = "Cool Beans"
+                    } else {
+                        setVisibility('dataTable', "initial");
+                        setVisibility('lyricsurl', "initial");
+                    }
                 }
             }
             );
