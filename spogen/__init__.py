@@ -32,6 +32,15 @@ def create_app(test_config=None):
     from . import lyrics
     objects = lyrics.init(spotipy, util, lyricsgenius)
 
+    @app.route('/')
+    def root():
+        if lyrics.get_playing_status(objects['spotipy']):
+            print("something playing")
+            return render_template('base.html')
+        else:
+            print("nothing playing")
+            return render_template('noneplaying.html')
+
     @app.route('/_get_music_data')
     def get_music_data():
         nonlocal objects # use objects from the parent function
@@ -50,15 +59,6 @@ def create_app(test_config=None):
             return jsonify(songname = '', lyrics = '')
         else:
             return jsonify(songname = '', lyrics = 'Adding song to database...')
-
-    @app.route('/')
-    def root():
-        if lyrics.get_playing_status(objects['spotipy']):
-            print("something playing")
-            return render_template('base.html')
-        else:
-            print("nothing playing")
-            return render_template('noneplaying.html')
 
     @app.route('/_get_lyrics', methods=['POST'])
     def lyrics_post():
