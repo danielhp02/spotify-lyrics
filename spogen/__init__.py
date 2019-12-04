@@ -3,7 +3,7 @@ import sys
 import spotipy
 import spotipy.util as util
 import lyricsgenius
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask import Flask, render_template, jsonify, request, redirect, url_for, send_from_directory
 
 def create_app(test_config=None):
     # create and configure the app
@@ -76,5 +76,10 @@ def create_app(test_config=None):
         lyrics.set_lyrics(song_details['songid'], song_details['songname'], newLyrics)
         print("new lyrics:", newLyrics)
         return redirect(url_for('root'))
+
+    @app.route('/favicon.ico')
+    def favicon():
+        return send_from_directory(os.path.join(app.root_path, 'static'),
+                                   'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
     return app
