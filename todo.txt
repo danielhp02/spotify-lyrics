@@ -4,5 +4,4 @@ mark lyrics as accurate
     - store in db (or somewhere persistant)
     - display how many people/times they were marked as accurate
 fix bug where spotify doesnt get checked when nothing is playing (copy some code from base.html to noneplaying.html)
-Clean up js so page only updates when the song changes
 Add option to manually set link to genius page
