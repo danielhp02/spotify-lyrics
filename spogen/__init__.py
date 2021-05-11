@@ -34,7 +34,17 @@ def create_app(test_config=None):
 
     @app.route('/')
     def root():
-        if lyrics.get_playing_status(objects['spotipy']):
+        nonlocal objects
+        
+        try:
+            playing_status = lyrics.get_playing_status(objects['spotipy'])
+
+        except spotipy.client.SpotifyException:
+            print("Token expired. Refreshing...")
+            objects = lyrics.init(spotipy, util, lyricsgenius)
+            print("Token refreshed.")
+            
+        if playing_status:
             print("something playing")
             return render_template('base.html')
         else:

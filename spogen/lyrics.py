@@ -9,6 +9,7 @@ import click
 from flask import current_app, g, render_template
 from flask.cli import with_appcontext
 import requests
+from requests.exceptions import HTTPError, Timeout
 
 adding_to_db = False
 
@@ -20,7 +21,7 @@ def init(spotipy, util, lyricsgenius):
     # Load tokens
     with open('./tokens.json', 'r') as json_file:
         tokens = simplejson.load(json_file)
-
+    
     # Authenticate Spotify and Genius
     token = util.prompt_for_user_token(username, scope, tokens["spotify"]['client_id'], tokens["spotify"]['client_secret'], tokens["spotify"]['redirect_uri'])
     genius = lyricsgenius.Genius(tokens["genius"]["token"])
@@ -51,9 +52,13 @@ def get_lyrics(genius, song_data):
         return [genius_data.lyrics, genius_data.url]
     except AttributeError:
         return "Lyrics not found."
-    except requests.exceptions.ReadTimeout:
+    except HTTPError as e:
+        print(e.errno)    # status code
+        print(e.args[0])  # status code
+        print(e.args[1])  # error message
+    except Timeout:
         print("Request timed out.")
-        return "Request timed out."
+        return get_lyrics(genius, song_data)#"Request timed out."
 
 def get_playing_status(sp):
     # Check if user is currently playing a song
