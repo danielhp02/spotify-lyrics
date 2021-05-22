@@ -43,6 +43,7 @@ def create_app(test_config=None):
             print("Token expired. Refreshing...")
             objects = lyrics.init(spotipy, util, lyricsgenius)
             print("Token refreshed.")
+            playing_status = lyrics.get_playing_status(objects['spotipy'])
             
         if playing_status:
             print("something playing")
